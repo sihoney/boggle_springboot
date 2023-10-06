@@ -1,0 +1,595 @@
+@charset "UTF-8";
+
+* {
+	font-family: 'MaruBuri';
+}
+
+#contents_review>ul>li {
+    float:left;
+    margin: 0px 30px 0px 0px;
+}
+
+#select_box{
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+/*
+.selected-emoBtn {
+	background-color: rgb(159 222 69);
+	border-color: rgb(159 222 69);
+}
+*/
+/*--------------- msg modal --------------------*/
+.msg_modal {
+	position: fixed;
+    top: 20%;
+    left: 50%;
+    background-color: #5993c5;
+    width: 20rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    opacity: 0;
+    transition: all 0.3s;
+    transform: translate(-50%, 10px);
+}
+.msg_modal.unstaged {
+	z-index: -1;
+	display: none;
+}
+.msg_modal.opaque {
+	opacity: 1;
+	transform: translate(-50%, 0)
+}
+.msg_modal p {
+	font-size: 1.5rem;
+    text-align: center;
+    line-height: 3rem;
+    font-weight: bold;
+    color: #fff;
+}
+/*------------------- 내 플레리리스트 모달 -------------------*/
+.modal_myply {
+	position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #efefef;
+    width: 50rem;
+    height: 42rem;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    opacity : 0;
+    transition: all 0.3s;
+}
+.modal_myply.unstaged {
+	z-index: -1;
+	display: none;
+}
+.modal_myply.opaque {
+	opacity: 1;
+}
+.modal_ply_header {
+	display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5rem;
+    padding: 1rem 0;
+}
+.modal_ply_header button {
+	border: none;
+    background: transparent;
+    cursor: pointer;
+}
+.modal_ply_ul {
+	background-color: #fff;
+    height: 35rem;
+    overflow: auto;
+    list-style:none;
+}
+/* 스크롤바 설정*/
+.modal_ply_ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* 스크롤바 막대 설정*/
+.modal_ply_ul::-webkit-scrollbar-thumb {
+  height: 17%;
+  background-color: rgba(255, 255, 255, 1);
+  /* 스크롤바 둥글게 설정    */
+  border-radius: 10px;
+}
+
+/* 스크롤바 뒷 배경 설정*/
+.modal_ply_ul::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.modal_ply_ul .list {
+    border-bottom: 1px solid gray;
+    padding: 2rem 1rem;
+    transition: all 0.3s;
+}
+.modal_ply_ul .list.selected {
+	background-color: #337ab7cf;
+}
+.modal_ply_ul .list:hover {
+	background-color: #cce8ff;
+}
+.modal_ply_ul .list .tagBtn {
+	background-color: #cce8ff;
+    border: 2px solid #337ab7;
+    border-radius: 0.5rem;
+    padding: 0.2rem 0.4rem;
+}
+.modal_ply_ul .list .playlist-title {
+	padding: 0.5rem;
+    font-size: 1.5rem;
+}
+/*------------------ modal_question --------------------*/
+.modal_question {
+	position: fixed;
+    top: 50%;
+    left: 50%;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    transition: all 0.3s;
+    opacity: 0;
+    transform: translate(-50%, 30px);
+    width: 45rem;
+    text-align: center;
+}
+.modal_question.unstaged {
+	display: none;
+	z-index: -1;
+}
+.modal_question.opaque {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+.modal_question p {
+	font-size: 1.7rem;
+    margin-bottom: 3rem;
+}
+.modal_question .mqBtn {
+    font-size: 1.5rem;
+    width: 5rem;
+    margin: 0 1rem;
+}
+/* ----- progress bar ----- */
+#progress_bar {
+	height: 100px;
+	position: sticky;
+    top: 0;
+    background-color: rgb(255 255 255 / 80%);
+    z-index: 10;
+}
+
+
+.progress-bar-contents span {
+    margin-left: 210px;
+    float: center;
+}
+/* ----- /progress bar ----- */
+
+
+/* ----- 책 선택하기 ----- */
+#contents #book_select h1 {
+	padding: 30px 0px 10px 0px;
+    margin: 50px 30px 10px 0px;
+	float:left;
+    font-family: 'KOHIBaeumOTF';
+    font-size: 25px;
+    color: #666666;
+}
+
+.book_title {
+    font-family: 'MinSans-Medium';
+    font-size: 20px;
+    color: #adaaaa;
+    /* margin: 0px 0px 20px 0px; */
+}
+
+#book_img {
+    float: left;
+    width: 220px;
+    height: 300px;
+    margin-right: 50px;
+    box-shadow: 8px 8px 8px rgb(172, 172, 172);
+}
+
+#book_detail {
+    float:left;
+}
+
+/* 책 제목 */
+#book_detail>h1 {
+    font-family: 'KOHIBaeumOTF';
+    font-size: 25px;
+    color: #666666;
+    margin: 10px 0px 20px 0px;
+}
+
+/* 책 저자 */
+#book_detail>h3 {
+    font-family: 'MinSans-Medium';
+    font-size: 20px;
+    color: #adaaaa;
+    margin: 0px 0px 20px 0px;
+}
+/* ----- /책 선택하기 ----- */
+
+
+/* ----- 책 선택하기 모달창 ----- */
+.modal-playlist .info-container .book-title {
+    width: fit-content;
+    padding: 0.1rem 0.2rem;
+    border: none;
+    background-color: #ffffff;
+    font-size: 1.9rem;
+    font-weight: bold;
+    color: #666666;
+    font-family: 'Nanum Myeongjo';
+    text-shadow: 3px 3px 5px #d1cfcf;
+}
+
+.modal-playlist .info-container .book-author {
+font-size: 1.3rem;
+color: #666666;
+font-family: 'Nanum Myeongjo';
+}
+
+.modal-playlist .info-container .review-count {
+font-weight: bold;
+color: rgb(75, 75, 75);
+font-family: 'Nanum Myeongjo';
+}
+
+.modal-playlist .book-img-container .img-thumbnail {
+    width: 92px;
+    height: 145px;
+    border-radius: 0.5rem;
+    background-image: none;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    margin-right: 1.5rem;
+    cursor: pointer;
+}
+/* ----- /책 선택하기 모달창 ----- */
+
+
+/* ----- 서평 쓰기 ----- */
+#review_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+	padding: 30px;
+	height: 600px;
+    width: 1030px;
+    border-radius: 16px;
+    background-color: #2E8B57;
+    color:#ffffff;
+    margin: auto;
+    vertical-align: middle;
+   opacity: 0.8;
+}
+#limit-text{
+    display: block;
+    color: #000000;
+    text-align: right;
+    font-size: 20px;
+    font-weight: bold;
+    color: #2E8B57;
+    padding: 0px;
+    margin: 10px 50px 0px 0px;
+    font-family: 'Nanum Myeongjo';
+   /* background-image: url(/static/imagefarm/101074948/7jq08lxPGuzxsz0f1zZAJIH4xmwITUMM) */
+}
+
+/*
+#review_box p {
+    display: table-cell;
+    vertical-align: middle;
+    text-align:center;
+    font-size: 20px;
+	font-family: 'Nanum Myeongjo'; 
+}
+*/
+#review_box textarea {
+    margin: auto;
+    width: 70%;
+    font-size: 20px;
+    background: transparent;
+    text-align: center;
+    resize: none;
+    border: none;
+    line-height: 3rem;   
+}
+
+textarea:focus {outline: none;}
+
+#review_box textarea::placeholder {
+	color: #ffffff;
+}
+
+#contents #limit-text>p{
+    size: 100px;
+}
+
+#book_review {
+    margin: 20px 0px 20px 0px;
+}
+
+.review_count {
+    font-family: 'MinSans-Medium';
+    font-size: 20px;
+    color: #adaaaa;
+    margin-right: 10px;
+}
+
+.review_num {
+    font-family: 'MinSans-Medium';
+    font-size: 20px;
+    font-weight: bold;
+    color: #666666;  
+}
+
+#btn_delete {
+    float:right;
+    padding: auto;
+    margin: 0px 10px 0px 0px;
+    background-color: none;
+}
+
+#btn_modify {
+    float:right;
+    padding: auto;
+    margin: 0px 10px 0px 0px;
+    background-color: none;
+}
+/* ----- /서평 쓰기 ----- */
+
+
+/* ----- 감정 태그 선택하기 ----- */
+#contents #mood_tag h1 {
+	padding: 30px 0px 10px 0px;
+    margin: 50px 30px 10px 0px;
+	float:left;
+    font-family: 'KOHIBaeumOTF';
+    font-size: 25px;
+    color: #666666;
+}
+
+#btn_mood button {
+	display:block;
+	float:left;
+    padding: 15px 40px 15px 40px;
+    margin: 5px;
+    transition: all 0.3s;
+}
+
+
+/* ----- 스타일 선택하기 ----- */
+#contents #style h1{
+	padding: 30px 0px 10px 0px;
+    margin: 150px 30px 10px 0px;
+	float:center; 
+    font-family: 'KOHIBaeumOTF';
+    font-size: 25px;
+    color: #666666;	
+}
+
+#select-style {
+    margin: 20px;
+}
+
+/* 스타일 선택 버튼 */
+.btn_style {
+	width: 70px;
+	height: 70px;
+	border-radius:50%;
+	border: none;
+	font-size:25px;
+	text-align:center;
+	line-height:30px;
+	margin-right:20px; 
+	background: #addddd; /* 여기 이미지 버튼으로 바꾸기  */
+	color: #fff;
+	opacity: 0.8;
+}
+/* ----- /스타일 선택하기 ----- */
+
+
+/* ----- 플레이리스트에 추가 ----- */
+#contents #add_playlist h1 {
+	padding: 30px 0px 10px 0px;
+    margin: 50px 30px 10px 0px;
+    font-family: 'KOHIBaeumOTF';
+    font-size: 25px;
+    color: #666666;
+}
+
+
+/* ----- 이미지 저장 ----- */
+#contents #download_img h1 {
+	padding: 30px 0px 10px 0px;
+    margin: 50px 30px 10px 0px;
+    font-family: 'KOHIBaeumOTF';
+    font-size: 25px;
+    color: #666666;
+}
+/* ----- /이미지 저장 ----- */
+
+
+/* 동그라미 버튼 */
+.btn_circle{
+	width: 70px;
+	height: 70px;
+	border-radius:50%;
+	border: none;
+	background: #5e5d5d38;
+	font-size:25px;
+	text-align:center;
+	line-height:30px;
+}
+
+
+/* ----- footer 쪽 기록하기 button ----- */
+#btn_admit{
+	height: 50px;
+	width:1110px;
+    margin-top: 50px;
+	display:block;
+}
+
+/* ----- footer 쪽 취소 button ----- */
+#btn_cancle{
+	height: 50px;
+	width:1110px;
+	margin-top: 5px;
+}
+
+/* ----- jumbotron 관련 ----- */
+.jumbotron>div>.button {
+    font-size: 125px;
+    font-weight: bold;
+    color: #666666;
+    text-align: center;
+    line-height: 100px;
+   	margin-bottom: 40px;
+}
+
+.jumbotron>div>p {
+    color: #adaaaa;
+    text-align: center;
+    line-height: 100px;
+}
+
+.jumbotron {
+    border-radius: 15px;
+    margin: 15px 0px 15px 0px;
+    padding: 35px 45px 35px 45px;
+}
+/* ----- /jumbotron2 관련 ----- */
+.jumbotron2 {
+    display: inline-flex;
+    width: 550px;
+    height: 100px;
+    background-color: #EEEEEE;
+    border-radius: 15px;
+    margin: 15px 5px 15px 5px;
+    padding: 35px 45px 35px 45px;
+}
+
+.jumbotron2 p {
+    color: #adaaaa;
+    font-size: 17px;
+    text-align: center;
+    padding: auto;
+    margin: auto;
+    font-family: 'MinSans-Medium';
+   
+}
+
+/* ----- footer ----- */
+#footer {
+    margin: 50px 0px 60px 0px;
+    border-top : 2px solid #e4e4e4;
+    padding: 15px 0px 0px 0px;
+    color: #666666;
+}
+
+#footer>div{
+    float: left;
+}
+
+#footer>a {
+    float: right;
+    margin: 18px 10px 0px 0px;
+}
+/* ----- /footer ----- */
+
+
+/* -------progress bar 연습-------- */
+.progressbar-wrapper {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 5px;
+/*    float: center;*/
+}
+
+.progressbar li {
+    list-style-type: none;
+    width: 20%;
+    float: left;
+    font-size: 12px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+}
+
+.progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #EEEEEE;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+}
+
+.progressbar li:after {
+     width: 100%;
+     height: 2px;
+     content: '';
+     position: absolute;
+     background-color: #EEEEEE;
+     top: 30px;
+     left: -50%;
+     z-index: 0;
+}
+
+.progressbar li:first-child:after {
+     content: none;
+}
+
+.progressbar li.active {
+    color: #2E8B57;
+    font-weight: bold;  
+}
+
+.progressbar li.active:before {
+    border-color: #55b776;
+    background: #2E8B57;
+}
+
+.progressbar li.active + li:after {
+    background-color: #55b776;
+}
+
+.progressbar li.active:before {
+    background: #55b776  url(user.svg) no-repeat center center;
+    background-size: 60%;
+}
+
+.progressbar li::before {
+    background: #fff url(user.svg) no-repeat center center;
+    background-size: 60%;
+}
+
+.progressbar {
+    counter-reset: step;
+    width: 135rem;
+    margin: 0 auto;
+}
+
+.progressbar li:before {
+    content: counter(step);
+    counter-increment: step; 
+}
+/* ------- /progress bar 연습 -------- */
