@@ -1,0 +1,130 @@
+@charset "UTF-8";
+
+/* 말줄임 */
+.word {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+
+    white-space: normal;
+    word-wrap : break-word; 
+    /* line-height: 1.2; */
+}
+
+
+/******************content********************/
+#content{
+    padding: 20px 25px;
+}
+.left{
+    float: left;
+}
+.right{
+    float: right;
+}
+/**********컨텐츠 공통**********/
+#content>div{
+    margin-bottom: 20px;
+}
+#content>div>div{
+    margin-bottom: 30px;
+}
+.minicontent{
+    width: 1080px;
+    height: 25px;
+}
+.minicontent div p{
+    display: inline-block;
+    font-weight: bold;
+    font-size: 20px;
+    color : #707070;
+    
+}
+.minicontent>#more>p{
+    font-size: 15px;
+    color: #ABAAAC;
+    margin-top: 5px;
+    
+}
+
+#addp{
+	float:right;
+	margin-top:-20px;
+}
+
+
+/**************컨텐츠4****************/
+.index{
+    font-size: 15px;
+    color: #ABAAAC;
+    margin-left: 35px;
+}
+
+/*gallery*/
+#content4 #playlist{
+    padding: 0px 30px;
+    text-align: center;
+}
+
+.nail{
+    display: inline-block;
+    width: 180px;
+    height: 180px;
+    border-radius: 12px;
+    color:#ffffff;
+    text-align: left;
+    margin: 10px;
+}
+.nail>div{
+    display: table;
+    width: 180px;
+    height: 100px;
+}
+
+.purple{
+    background-color : #7656FD;
+}
+.deeppurple{
+    background-color : #63307E;
+}
+.green{
+    background-color:  #31A848;
+}
+
+.nail-desc{
+    padding:16px;
+    font-size: 14px;
+}
+
+#opac{
+    display : table;
+    vertical-align: bottom;
+    background : #ffffff7c;
+    height: 80px; width:180px !important;
+    border-bottom-right-radius:12px;
+    border-bottom-left-radius:12px;
+    text-align : center;
+}
+#opac>span {
+	display : table-cell;
+	vertical-align : middle;
+	font-size: 45px;
+	text-align : center;
+}
+
+
+
+div:hover{
+	cursor:pointer;
+}
+
+.empty-box {
+	height: 17rem;
+	border-radius: 1rem;
+    background-color: #cb8cf7;
+    line-height: 17rem;
+    font-size: 2rem;
+    font-weight: bold;
+}
