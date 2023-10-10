@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Tuple;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,12 +16,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.boggle.example.controller.LoginResponse;
 import com.boggle.example.domain.PlaylistEntity;
 import com.boggle.example.domain.ReviewEntity;
 import com.boggle.example.repository.PlaylistRepository;
 import com.boggle.example.repository.ReviewRepository;
 import com.boggle.example.repository.ReviewUserRepository;
 import com.boggle.example.repository.UserRepository;
+import com.boggle.example.util.PagingUtil;
 
 @Service
 public class PlaylistService {
@@ -39,9 +43,7 @@ public class PlaylistService {
 		
 		// 유저가 좋아요한 플레이리스트들
 		List<PlaylistEntity> likeList = plRepository.findByPlaylistUser_UserId(userId);
-		System.out.println(likeList);
-		//[]
-		
+
 		// 인기있는 플레이리스트들
 		List<Object[]> ppList = plRepository.findOrderByLikeCount(PageRequest.of(1, 4, Sort.by(Sort.Order.desc("likeCount"))));
 		Iterator<Object[]> itr = ppList.iterator();
@@ -53,22 +55,10 @@ public class PlaylistService {
 			
 			entityList.add(plEntity);
 		}
-		
-		System.out.println(entityList);
-		//[]
-		
+
 		// 내가 만든 플레이리스트들
 		List<PlaylistEntity> myList = plRepository.findByUserId(userId);
-		System.out.println(myList);
-		/*
-		 * [PlaylistEntity(
-		 * 		playlistId=2, 
-		 * 		playlistName=우갈02, 
-		 *		userId=1, 
-		 *		createdAt=2023-09-12T21:13, 
-		 *		likeCount=null)]
-		 */
-		
+
 		if(likeList.size() == 0)
 			likeList = null;
 		
@@ -87,28 +77,75 @@ public class PlaylistService {
 		return map;
 	}
 	
-	public void getPlaylistInfo(Long playlistId) {
+	private PlaylistEntity getPlCover(Long playlistId) {
 		//★플레이리스트 커버
-//		plRepository
+		Tuple tuple = plRepository.findByPlaylistId(playlistId);
+		
+		PlaylistEntity plEntity = (PlaylistEntity) tuple.get(0);
+		String nickname = (String) tuple.get(1);
+		
+		plEntity.setNickname(nickname);
+		
+		return plEntity;
 	}
 	
-	public Page<ReviewEntity> getReviewByPlaylist(Long authUserId, Long plUserId, Long playlistId, Pageable pageable) {
+	private Page<ReviewEntity> getReviewByPlaylist(Long authUserId, Long plUserId, Long playlistId, Pageable pageable) {
 		
 		// 서평 리스트
-		Page<ReviewEntity> page = reviewRepository.getAllReviewByPlaylistId(playlistId, pageable);
+		Page<Object[]> page = reviewRepository.getAllReviewByPlaylistId(playlistId, authUserId, pageable);
 		
 		// alreadyLiked 여부 체크하기
 		List<ReviewEntity> newEntityList = new ArrayList<>();
-		Iterator<ReviewEntity> itr = page.getContent().iterator();	
+		Iterator<Object[]> itr = page.getContent().iterator();	
 		while(itr.hasNext()) {
-			ReviewEntity entity = itr.next();
+			Object[] obj = itr.next();
 			
-			entity.setLikeByAuthUser(reviewUserRepository.existsByUserIdAndReviewId(authUserId,entity.getReviewId()));
+			ReviewEntity entity = (ReviewEntity) obj[0];
+			String nickname = (String) obj[1];
+			Long likeByAuthUser = (Long) obj[2];
+
+			if(likeByAuthUser != null && likeByAuthUser.intValue() == 1) {
+				entity.setLikeByAuthUser(true);
+			} else {
+				entity.setLikeByAuthUser(false);
+			}
+			entity.setNickname(nickname);
+			
 			newEntityList.add(entity);
 		}
 		
 		Page<ReviewEntity> newPage = new PageImpl<>(newEntityList, page.getPageable(), page.getTotalElements());
 		
 		return newPage;
+	}
+	
+	public Map<String, Object> getPlaylistFolder(Long authUserId, Long playlistId, Pageable pageable) {
+		
+		PlaylistEntity plEntity = getPlCover(playlistId);
+		
+		String result;
+		if(authUserId == plEntity.getUserId()) {
+			result = "sameUser";
+		} else {
+			result = "otherUser";
+		}
+
+		Page<ReviewEntity> page = getReviewByPlaylist(
+				authUserId, 
+				plEntity.getUserId(), 
+				playlistId, 
+				pageable
+				);
+	
+		Map<String, Integer> pagination = PagingUtil.pagination(
+				(int) page.getTotalElements(), 
+				page.getSize(), 
+				page.getNumber());
+
+		return Map.of(
+				"reviewList", page.getContent(), 
+				"playlistCover", plEntity, 
+				"startPage", pagination.get("startPage"), 
+				"endPage", pagination.get("endPage"));
 	}
 }

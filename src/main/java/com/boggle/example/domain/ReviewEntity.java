@@ -73,6 +73,9 @@ public class ReviewEntity implements Serializable {
 	@Transient
 	private boolean likeByAuthUser;
 	
+	@Transient
+	private String nickname;
+	
 	private ReviewEntity(String content, Long userId, EmotionEntity emotionEntity, Long fontId, LocalDateTime createAt) {
 		this.content = content;
 		this.userId = userId;

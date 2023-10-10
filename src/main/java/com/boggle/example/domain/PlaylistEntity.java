@@ -1,24 +1,22 @@
 package com.boggle.example.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @ToString
 @NoArgsConstructor
 @Entity(name = "playlist")
@@ -41,6 +39,9 @@ public class PlaylistEntity {
 	
 	@Transient
 	private Long likeCount;
+	
+	@Transient
+	private String nickname;
 	
 	private PlaylistEntity (String playlistName, Long userId) {
 		this.playlistName = playlistName;
