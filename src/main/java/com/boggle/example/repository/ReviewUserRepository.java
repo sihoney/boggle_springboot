@@ -19,5 +19,4 @@ public interface ReviewUserRepository extends JpaRepository<ReviewUserEntity, Lo
 	
 	void deleteByReviewId(Long reviewId);
 	
-	
 }

@@ -6,6 +6,11 @@
   /* body {
     background-color: black;
   } */
+  .modal_body {
+  	height: 80rem;
+  	overflow-y: scroll;
+  }
+  
   #modal-container {
     width: 1000px;
     border-radius: 20px;
@@ -96,7 +101,7 @@
     background: transparent;
     cursor: pointer;
     color: #B4B4B4;
-  	font-size: 16px;
+  	font-size: 20px;
   }
   .modal-list ul .review-card .btn-check .fa-circle-check {
     font-size: 2rem;

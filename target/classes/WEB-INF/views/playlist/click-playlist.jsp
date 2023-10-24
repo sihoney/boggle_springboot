@@ -29,9 +29,9 @@
 		<!-- ------header------ -->
 
 		<!-- ------nav------ -->
-		<div id="nav" class="clearfix">
+		<nav id="nav" class="clearfix">
 			<c:choose>
-				<c:when test="${requestScope.result eq sameUser}">
+				<c:when test="${playlistCover.nickname eq authUser.nickname}">
 					<ul class="nav nav-tabs">
 						<li role="presentation"><a href="${pageContext.request.contextPath}/${authUser.nickname}/mybook">내 서평</a></li>
 						<li role="presentation"><a href="${pageContext.request.contextPath}/${authUser.nickname}/tastemain">취향저격</a></li>
@@ -51,7 +51,7 @@
 					</ul>
 				</c:otherwise>
 			</c:choose>
-		</div>
+		</nav>
 		<!-- ------nav------ -->
 
 		<!-- cover -->
@@ -62,19 +62,28 @@
 			</div>
 			<div id="btn-cover" class="float-r">
 				<button type="button" id="playlistLike" class="btn btn-default float-r"
-					data-playlistno="${param.playlistId}"
+					data-playlistno="${requestScope.playlistCover.playlistId}"
 					data-userId="${authUser.userId}" 
-					data-nickname="${param.nickname}">
+					data-nickname="">
 					좋아요
-					<span id="likeview" class="" aria-hidden="true"></span>
-				</button>
+					
+					<c:choose>
+						<c:when test="${requestScope.playlistCover.likeByAuthUser }">
+							<span id="likeview" class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+						</c:when>
+						<c:otherwise>
+							<span id="likeview" class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
+						</c:otherwise>
+					</c:choose>					
+					
+				</button>			
 				<button type="button" class="btn btn-default float-r" onclick="location.href = '${pageContext.request.contextPath}/main?playlistId=${requestScope.playlistCover.playlistId}';">전체재생</button>
 			</div>
 		</div>
 		<!-- cover -->
 		
 		<!-- 플레이리스트 생성한 유저만 수정가능 -->
-		<c:if test="${requestScope.result eq sameUser}">
+		<c:if test="${authUser.nickname eq playlistCover.nickname}">
 			<div id="middle-content">
 				<div id="playlist-add" data-keyboard="false" data-backdrop="static">
 					<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 
@@ -88,8 +97,8 @@
 		</c:if>
 		
 		<!--review List-->
-		<div id="review-wrap">
-
+		<main id="review-wrap">
+			<div id="jumbo-wrap">
 			<c:forEach items="${requestScope.reviewList}" var="playlistVo">
 				<!-- 서평 리스트 vo-->
 				<div class="jumbotron">
@@ -99,10 +108,10 @@
 								<a href="${pageContext.request.contextPath}/bookdetail?bookNo=${playlistVo.bookEntity.isbn}&userId=${playlistVo.userId}">${playlistVo.bookEntity.bookName}</a>
 							</h3>
 							
-							<!-- 자기글에만 수정 삭제 노출 -->
-							<c:if test="${authUser.userId == playlistVo.userId}">
+							<!-- 본인이 만든 플레이리스트에만 출력 -->
+							<c:if test="${authUser.nickname eq playlistCover.nickname}">
 								<a id="${playlistVo.reviewId }" class="review_modify btn_delete_review" data-reviewId="${playlistVo.reviewId}">삭제</a>
-								<a href="${pageContext.request.contextPath}/review/write?reviewId=${playlistVo.reviewId}" class="review_modify">수정</a>
+								<%-- <a href="${pageContext.request.contextPath}/review/write?reviewId=${playlistVo.reviewId}" class="review_modify">수정</a> --%>
 							</c:if>
 							<!-- 자기글에만 수정 삭제 노출 -->
 
@@ -119,11 +128,11 @@
 							<c:choose>
 								<c:when test="${playlistVo.likeByAuthUser eq true}">
 									<!-- 좋아요 활성화 -->
-									<span id="btn_like_${playlistVo.reviewId }" class="btn_like glyphicon glyphicon-heart icon-success" aria-hidden="true"></span>
+									<span id="btn_like_${playlistVo.reviewId }" class="btn_like glyphicon glyphicon-heart icon-success" data-reviewId="${playlistVo.reviewId }" aria-hidden="true"></span>
 								</c:when>
 								<c:otherwise>
 									<!-- 좋아요 비활성화 -->
-									<span id="btn_like_${playlistVo.reviewId }" class="btn_like glyphicon glyphicon-heart-empty icon-success" aria-hidden="true"></span> 													
+									<span id="btn_like_${playlistVo.reviewId }" class="btn_like glyphicon glyphicon-heart-empty icon-success" data-reviewId="${playlistVo.reviewId }" aria-hidden="true"></span> 													
 								</c:otherwise>
 							</c:choose>
 							<!-- 하트 아이콘 -->
@@ -163,22 +172,24 @@
 					</div>
 				</div>
 			</c:forEach>
+			</div>
 			<!-- 서평 리스트 vo-->
 		
 			<!-- 페이징 --> 
-			<nav id="page">
+			<div id="page">
 				<ul class="pagination">
-
-					<c:forEach begin="${requestScope.startPageBtnNo}" end="${requestScope.endPageBtnNo}" step="1" var="i">
-								<li>
-									<a href="${pageContext.request.contextPath}/playlist/folder?playlistNo=${foldermainMap.playlistCover.playlistNo}&userId=${foldermainMap.playlistCover.userId}&nickname=${param.nickname}&crtPage=${i}">${i}</a>
+ 
+  					<c:forEach begin="${requestScope.startPageBtnNo}" end="${requestScope.endPageBtnNo}" step="1" var="i">
+								<li class="page-btn">
+									<!-- ${pageContext.request.contextPath}/playlist/folder?playlistNo=${foldermainMap.playlistCover.playlistNo}&userId=${foldermainMap.playlistCover.userId}&nickname=${param.nickname}&crtPage=${i} -->
+									<a>${i}</a>
 								</li>
 					</c:forEach>
 
 				</ul>
-			</nav>
+			</div>
 			<!-- 페이징 -->
-		</div>
+		</main>
 		
 		<!-- footer -->
 		<c:import url="/WEB-INF/views/include/footer.jsp"></c:import>
@@ -193,7 +204,7 @@
 		<div class="modal-dialog">
 			<!-- Modal content-->
 			<div class="modal-content">
-				<div class="modal-body">
+				<div class="modal-body modal_body">
 					<div class="modal-container">
 						<div class="modal-header">
 							<a class="modal-close">뒤로가기</a>

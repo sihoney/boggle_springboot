@@ -9,8 +9,12 @@ import com.boggle.example.domain.ReviewEntity;
 
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>{
 
+	ReviewEntity findByReviewId(Long reviewId);
+	
 	Page<ReviewEntity> findAllByUserId(Long userId, Pageable pageable);
 	
+	Page<ReviewEntity> findAllByUserIdAndContentContaining(Long userId, String query, Pageable pageable);
+
 	Page<ReviewEntity> findAllByUserIdAndEmotionEntity_EmotionId(Long userId, Long emotionId, Pageable pageable);
 
 	Page<ReviewEntity> findAllByBookEntity_isbn(Long isbn, Pageable pageable);
@@ -23,11 +27,12 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>{
 	
 	void deleteByUserIdAndReviewId(Long userId, Long reviewId);
 	
-	@Query("SELECT r, u.nickname, COUNT(ru) FROM review r " +
-		       "LEFT JOIN review_playlist rp ON r.reviewId = rp.reviewId " +
-		       "LEFT JOIN users u ON u.userId = r.userId " +
-		       "LEFT JOIN review_user ru ON ru.reviewId = r.reviewId AND ru.userId = ?2 " +
-		       "WHERE rp.playlistId = ?1 " + 
-		       "GROUP BY r.reviewId")
-	Page<Object[]> getAllReviewByPlaylistId(Long playlistId, Long authUserId, Pageable pageable);
+//		       "LEFT JOIN review_user ru ON ru.reviewId = r.reviewId AND ru.userId = ?2 " +
+//		       "GROUP BY r.reviewId"
+//	@Query("SELECT r, u.nickname " +
+//				"FROM review r " +
+//		       "INNER JOIN r.review_playlist rp " +
+//		       "INNER JOIN r.users u " + 
+//		       "WHERE rp.playlistId = :playlistId")
+//	Page<Object[]> getAllReviewByPlaylistId(Long playlistId, Pageable pageable);
 }

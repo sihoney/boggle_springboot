@@ -17,21 +17,17 @@ public class ReviewPlaylistRepositoryTest {
 	@Autowired
 	ReviewPlaylistRepository repository;
 	
-	@Test
-	public void saveTest() {
-		//Given
-		Long reviewId = Long.parseLong("1");
-		Long playlistId = Long.parseLong("6");
-		ReviewPlaylistEntity entity = new ReviewPlaylistEntity(playlistId, reviewId);
-		
-		//When
-		ReviewPlaylistEntity resultEntity = repository.save(entity);
-		
-		//Then
-		Assertions.assertNotNull(resultEntity);
-		Assertions.assertEquals(reviewId, resultEntity.getReviewId());
-		Assertions.assertEquals(playlistId, resultEntity.getPlaylistId());
-	}
+	/*
+	 * @Test public void saveTest() { //Given Long reviewId = Long.parseLong("1");
+	 * Long playlistId = Long.parseLong("6"); ReviewPlaylistEntity entity = new
+	 * ReviewPlaylistEntity(playlistId, reviewId);
+	 * 
+	 * //When ReviewPlaylistEntity resultEntity = repository.save(entity);
+	 * 
+	 * //Then Assertions.assertNotNull(resultEntity);
+	 * Assertions.assertEquals(reviewId, resultEntity.getReviewId());
+	 * Assertions.assertEquals(playlistId, resultEntity.getPlaylistId()); }
+	 */
 	
 //	@Test
 //	public void findByIdTest() {

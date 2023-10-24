@@ -136,7 +136,9 @@ public class MyBookService {
 		reviewUserRepository.deleteByReviewId(reviewId);
 		
 		// 플리 목록에서 삭제
-		reviewPlaylistRepository.deleteByReviewId(reviewId);
+		ReviewEntity reviewEntity = new ReviewEntity();
+		reviewEntity.setReviewId(reviewId);
+		reviewPlaylistRepository.deleteByReviewEntity(reviewEntity);
 		
 		// 서평 삭제
 		reviewRepository.deleteByUserIdAndReviewId(userId, reviewId);

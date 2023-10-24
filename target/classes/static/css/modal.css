@@ -17,6 +17,8 @@
 
 .modal-body {
     margin: 40px 40px 40px 40px;
+    height: 60rem;
+    overflow: scroll;
 }
 
 .modal-body>a {

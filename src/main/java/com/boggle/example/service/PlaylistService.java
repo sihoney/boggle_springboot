@@ -1,10 +1,14 @@
 package com.boggle.example.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.Tuple;
 
@@ -15,11 +19,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.controller.LoginResponse;
 import com.boggle.example.domain.PlaylistEntity;
+import com.boggle.example.domain.PlaylistUserEntity;
 import com.boggle.example.domain.ReviewEntity;
+import com.boggle.example.domain.ReviewPlaylistEntity;
 import com.boggle.example.repository.PlaylistRepository;
+import com.boggle.example.repository.PlaylistUserRepository;
+import com.boggle.example.repository.ReviewPlaylistRepository;
 import com.boggle.example.repository.ReviewRepository;
 import com.boggle.example.repository.ReviewUserRepository;
 import com.boggle.example.repository.UserRepository;
@@ -36,7 +44,12 @@ public class PlaylistService {
 	ReviewRepository reviewRepository;
 	@Autowired
 	ReviewUserRepository reviewUserRepository;
+	@Autowired
+	PlaylistUserRepository plUserRepository;
+	@Autowired
+	ReviewPlaylistRepository rvPlRepository;
 	
+	@Transactional(readOnly = true)
 	public Map<String, List<PlaylistEntity>> getPlaylists(String nickname) {
 		// 유저 정보 불러오기
 		Long userId = userRepository.findByNickname(nickname).getUserId();
@@ -77,75 +90,113 @@ public class PlaylistService {
 		return map;
 	}
 	
-	private PlaylistEntity getPlCover(Long playlistId) {
-		//★플레이리스트 커버
-		Tuple tuple = plRepository.findByPlaylistId(playlistId);
+	/* ★플레이리스트 커버 */
+	private PlaylistEntity getPlCover(Long userId, Long playlistId) {
+		
+		Tuple tuple = plRepository.getByPlaylistId(playlistId);
 		
 		PlaylistEntity plEntity = (PlaylistEntity) tuple.get(0);
 		String nickname = (String) tuple.get(1);
 		
 		plEntity.setNickname(nickname);
 		
+		Optional<PlaylistUserEntity> plUserEntity = plUserRepository.findByUserIdAndPlaylistId(userId, playlistId);
+		if(plUserEntity.isPresent()) {
+			plEntity.setLikeByAuthUser(true);
+		}
+		
 		return plEntity;
 	}
-	
-	private Page<ReviewEntity> getReviewByPlaylist(Long authUserId, Long plUserId, Long playlistId, Pageable pageable) {
-		
-		// 서평 리스트
-		Page<Object[]> page = reviewRepository.getAllReviewByPlaylistId(playlistId, authUserId, pageable);
-		
-		// alreadyLiked 여부 체크하기
-		List<ReviewEntity> newEntityList = new ArrayList<>();
-		Iterator<Object[]> itr = page.getContent().iterator();	
-		while(itr.hasNext()) {
-			Object[] obj = itr.next();
-			
-			ReviewEntity entity = (ReviewEntity) obj[0];
-			String nickname = (String) obj[1];
-			Long likeByAuthUser = (Long) obj[2];
 
-			if(likeByAuthUser != null && likeByAuthUser.intValue() == 1) {
-				entity.setLikeByAuthUser(true);
-			} else {
-				entity.setLikeByAuthUser(false);
-			}
-			entity.setNickname(nickname);
+	private Page<ReviewEntity> getReviewByPlaylist(Long authUserId, Long playlistId, Pageable pageable) {
+		
+		Page<ReviewPlaylistEntity> page = rvPlRepository.findAllByPlaylistEntity(plRepository.findByPlaylistId(playlistId), pageable);
+
+		List<ReviewEntity> entityList = page.getContent().stream().map(entity -> {
+			ReviewEntity reviewEntity = entity.getReviewEntity();
 			
-			newEntityList.add(entity);
-		}
-		
-		Page<ReviewEntity> newPage = new PageImpl<>(newEntityList, page.getPageable(), page.getTotalElements());
-		
-		return newPage;
+			boolean likeByAuthUser = reviewUserRepository.existsByUserIdAndReviewId(authUserId, reviewEntity.getReviewId());
+			reviewEntity.setLikeByAuthUser(likeByAuthUser);
+			
+			return reviewEntity;
+		}).collect(Collectors.toList());
+				
+		return new PageImpl<>(entityList, page.getPageable(), page.getTotalElements());
 	}
 	
+	@Transactional(readOnly = true)
 	public Map<String, Object> getPlaylistFolder(Long authUserId, Long playlistId, Pageable pageable) {
 		
-		PlaylistEntity plEntity = getPlCover(playlistId);
-		
-		String result;
-		if(authUserId == plEntity.getUserId()) {
-			result = "sameUser";
-		} else {
-			result = "otherUser";
-		}
+		PlaylistEntity plEntity = getPlCover(authUserId, playlistId);
 
-		Page<ReviewEntity> page = getReviewByPlaylist(
-				authUserId, 
-				plEntity.getUserId(), 
-				playlistId, 
-				pageable
-				);
+		Page<ReviewEntity> page = getReviewByPlaylist(authUserId, playlistId, pageable);
 	
 		Map<String, Integer> pagination = PagingUtil.pagination(
-				(int) page.getTotalElements(), 
-				page.getSize(), 
-				page.getNumber());
-
+				(int) page.getTotalElements(),
+				pageable.getPageSize(), 
+				pageable.getPageNumber() + 1);
+		
 		return Map.of(
 				"reviewList", page.getContent(), 
 				"playlistCover", plEntity, 
 				"startPage", pagination.get("startPage"), 
-				"endPage", pagination.get("endPage"));
+				"endPage", pagination.get("endPage"),
+				"authUserId", authUserId);
+	}
+	
+	/* 모달 > 서평 목록 */
+	@Transactional(readOnly = true)
+	public Page<ReviewEntity> getAllReviewByUserId(Long userId, String query, Pageable pageable) {
+		
+		if(!Objects.isNull(query)) {
+			return reviewRepository.findAllByUserIdAndContentContaining(userId, query, pageable);
+		} else {
+			return reviewRepository.findAllByUserId(userId, pageable);
+		}
+	}
+	
+	/* 플리 서평 삭제 */
+	@Transactional
+	public void deleteReviewFromPlaylist(Long reviewId, Long playlistId) {
+		rvPlRepository.deleteByReviewEntityAndPlaylistEntity(reviewRepository.findByReviewId(reviewId), plRepository.findByPlaylistId(playlistId));
+	}
+	
+	/* 플리 좋아요 & 취소 */
+	@Transactional
+	public Long toggleLikePlaylist(Long userId, Long playlistId) {
+		
+		Optional<PlaylistUserEntity> existingLike = plUserRepository.findByUserIdAndPlaylistId(userId, playlistId);
+		
+		// 좋아요가 이미 존재하면 삭제
+	    if (existingLike.isPresent()) {
+	        plUserRepository.delete(existingLike.get());
+	        return 0L;
+	    } 
+	    // 좋아요가 존재하지 않으면 생성
+	    else {
+	        PlaylistUserEntity newLike = new PlaylistUserEntity();
+	        newLike.setPlaylistId(playlistId);
+	        newLike.setUserId(userId);
+	        return plUserRepository.save(newLike).getPlaylistUserId();
+	    }
+	}
+	
+	/* 서평 플리에 추가 */
+	@Transactional
+	public void addReviewListToPl(List<Integer> reviewList, Long playlistId) {
+		
+		Iterator<Integer> itr = reviewList.iterator();
+		while(itr.hasNext()) {
+			Long reviewId = (long) itr.next();
+			System.out.println(reviewId);
+			ReviewPlaylistEntity entity = new ReviewPlaylistEntity();
+			
+			entity.setPlaylistEntity(plRepository.findByPlaylistId(playlistId));
+			entity.setReviewEntity(reviewRepository.findByReviewId(reviewId));		
+			entity.setAddedAt(LocalDateTime.now());
+			
+			ReviewPlaylistEntity result = rvPlRepository.save(entity);
+			System.out.println(result);
+		}
 	}
 }
