@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,26 @@ import com.boggle.example.util.FileUploadUtil;
 @Service
 public class UserService {
 		
-	@Autowired
-	UserRepository userRepository;
-	
+//	@Autowired
+	private final UserRepository userRepository;
+//    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }    
+    
+//    public void saveUser(UserEntity userEntity) {
+//        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+//        userRepository.save(userEntity);
+//    }
+
+    public Optional<UserEntity> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+    
 	/* 가입 */
 	@Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE) 
 	public UserIdResponse join(UserRequest userRequest) {
@@ -31,10 +49,12 @@ public class UserService {
 				userRequest.getUserName(), 
 				userRequest.getNickname(), 
 				userRequest.getEmail(), 
-				userRequest.getPassword(), 
+				passwordEncoder.encode(userRequest.getPassword()), 
 				userRequest.getUserProfile());
 		
 		userRepository.save(userEntity);
+//		saveUser(userEntity);
+		
 		return UserIdResponse.from(userEntity.getUserId());
 	}
 	
@@ -49,8 +69,12 @@ public class UserService {
 	/* 비밀번호 체크 */
 	public boolean checkPassword(String nickname, String passwordToCheck) {
 		UserEntity authUserEntity = userRepository.findByNickname(nickname);
-
-		return authUserEntity.getPassword().equals(passwordToCheck);
+//		System.out.println(authUserEntity.getPassword());
+		
+		String encodedPasswordToCheck = passwordEncoder.encode(passwordToCheck);
+//		System.out.println(encodedPasswordToCheck);
+		
+		return passwordEncoder.matches(passwordToCheck, authUserEntity.getPassword());
 	}
 	
 	/* 로그인 */
@@ -87,7 +111,8 @@ public class UserService {
         	}
         	
         	if(!Objects.isNull(password) && !"".equals(password) && !"undefined".equals(nickname)) {
-        		userEntity.setPassword(password);
+//        		password = passwordEncoder.encode(password);
+        		userEntity.setPassword(passwordEncoder.encode(password));
         	}
         	
         	if (!Objects.isNull(file)) {

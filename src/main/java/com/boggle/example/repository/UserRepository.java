@@ -1,5 +1,7 @@
 package com.boggle.example.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.boggle.example.domain.UserEntity;
@@ -13,4 +15,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
 	boolean existsByNickname(String nickname);
 
 	UserEntity findByNickname(String nickname);
+	
+	Optional<UserEntity> findByEmail(String email);
 }
