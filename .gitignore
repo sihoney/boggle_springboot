@@ -1,6 +1,9 @@
 *.properties
+*.sql
 /build/
 /target/
+/src/main/resources/static/images
+/src/main/resources/static/music
 
 # Java project
 # Compiled class file
