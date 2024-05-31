@@ -1,11 +1,9 @@
 package com.boggle.example.domain;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -41,6 +39,10 @@ public class BookEntity {
 	@JsonProperty("categoryId")
 	@Column(name = "genre_id")
 	private Long genreId;
+	
+//	@JsonProperty("categoryId")
+//	@ManyToOne
+//	private GenreEntity genreEntity;
 	
 	@JsonProperty("link")
 	@Column(name = "book_url")
