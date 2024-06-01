@@ -1,6 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>     
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %> 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,64 +9,74 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boggle - main</title>
-    <script src="${pageContext.request.contextPath}/asset/js/app3.js" defer></script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/style3.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="${pageContext.request.contextPath}/asset/js/jquery-1.12.4.js"></script>
     
     <link href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css" rel="stylesheet">
     <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-barun-pen.css" rel="stylesheet">
 	<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-gothic-eco.css" rel="stylesheet">
 	<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-myeongjo.css" rel="stylesheet">
+	
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style3.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style3-slide.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style3-sidebar.css">
+    <!--
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style3-modal.css">
+    -->
+    <script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/static/js/app3.js" defer></script>
+    <script src="${pageContext.request.contextPath}/resources/static/js/main-slide.js" defer></script>
+    <script src="${pageContext.request.contextPath}/resources/static/js/main-sidebar.js" defer></script> 
+    <script src="${pageContext.request.contextPath}/resources/static/js/main-modal.js" defer></script>
 </head>
 <body>
-<!-- Header -->
+	<!-- Header -->
     <header>
         <!-- nav -->
         <nav>
             <div class="nav-header">
-                <div class="logo"><img src="${pageContext.request.contextPath}/asset/img/logo/logo2.png"></div>
+                <div class="logo"><img src="${pageContext.request.contextPath}/resources/static/images/logo/logo2.png"></div>
             </div>
-            
             <div class="links-container">
-                <ul class="links">
-                
-                	<c:choose>
-                		<c:when test="${sessionScope.authUser eq null}">
-                			<li class="mobile_delete">
-                				<a href="${pageContext.request.contextPath}/user/joinForm">회원가입</a>
-                			</li>
-                   			<li class="login" data-logStatus="logout">
-		                        <div class="userImg">
-		                            <img src="${pageContext.request.contextPath}/asset/img/profile.png" alt="">
-		                        </div>
-		                        <a href="${pageContext.request.contextPath}/user/loginForm">로그인</a>
-		                    </li>
-                		</c:when>
-                		<c:otherwise>
-                			<!-- 로그인 됐을때 화면 -->
-		                    <li class="mobile_delete"><a href="${pageContext.request.contextPath}/review/write">기록하기</a></li>
-		                    <li class="login" data-logStatus="login" data-userNo="${sessionScope.authUser.userNo }">
-		                    	<a href="${pageContext.request.contextPath}/${authUser.nickname}">
-		                    		<div class="userImg">
-			                            <img id="header-img-icon" src="${authUser.userProfile }" class="img-circle" onerror="this.src='${pageContext.request.contextPath}/asset/img/profile.png'">
-			                        </div>
-			                        <a href="${pageContext.request.contextPath}/${sessionScope.authUser.nickname }">${sessionScope.authUser.nickname }</a>
-		                    	</a>
-		                    </li>
-                		</c:otherwise>
-                	</c:choose>
+                <ul class="links">				
+					<sec:authentication var="auth" property="principal" />
+						
+					<sec:authorize access="isAuthenticated()">
+					    <!-- 로그인한 사용자에게만 보이는 콘텐츠 -->			    
+					    <li class="mobile_delete"><a href="${pageContext.request.contextPath}/write">기록하기</a></li>
+					    <li class="login" data-logStatus="login" data-userNo="${auth.userId}">
+					        <a href="${pageContext.request.contextPath}/${auth.nickname}/mybook">
+					            <div class="userImg">
+					                <img id="header-img-icon" src="${pageContext.request.contextPath}/resources/static/images/${auth.profileUrl}" class="img-circle" onerror="this.src='${pageContext.request.contextPath}/resources/static/images/profile.png'">
+					            </div>
+					            <a href="${pageContext.request.contextPath}/${auth.nickname}/mybook">
+					                <c:out value="${auth.nickname}" />
+					            </a>
+					        </a>
+					    </li>
+					</sec:authorize>
+					
+					<sec:authorize access="!isAuthenticated()">
+					    <!-- 로그아웃한 사용자에게만 보이는 콘텐츠 -->
+               			<li class="mobile_delete">
+               				<a href="${pageContext.request.contextPath}/user/joinForm">회원가입</a>
+               			</li>
+                  			<li class="login" data-logStatus="logout">
+	                        <div class="userImg">
+	                            <img src="${pageContext.request.contextPath}/resources/static/images/profile.png" alt="">
+	                        </div>
+	                        <a href="${pageContext.request.contextPath}/user/loginForm">로그인</a>
+	                    </li>
+					</sec:authorize>
 
                 </ul>
             </div>
-        
         </nav>
-        
+        <!-- nav -->
         <button class="sidebarBtn">
             <i class="fa-solid fa-bars"></i>
         </button>
     </header>   
-
+	<!-- Header -->
     <!-- Container -->
     <div class="container">
 
@@ -85,7 +96,9 @@
             <p>슬라이드 전환 방식을 변경하고 싶으면 '스페이스바'를 눌러주세요</p>
         </div>
 
-        <div class="slide-container"></div>
+        <div class="slide-container">
+        	<div class="slide"></div>
+        </div>
         
     </div>
 
@@ -97,7 +110,7 @@
         <div class="sidebar-header">
             <div class="nav-header">
                 <div class="sidebar-logo logo">
-                	<img src="${pageContext.request.contextPath}/asset/img/logo/logo2.png">
+                	<img src="${pageContext.request.contextPath}/resources/static/images/logo/logo2.png">
                 </div>
             </div>
             <button type="button" class="close-btn">
@@ -110,8 +123,8 @@
             
             
                 <!-- <button class="emoTag">행복</button> -->
-                <c:forEach var="emoVo" items="${emoList }" varStatus="status">
-                	<button id="${emoVo.emoNo }" class="emoTag">${emoVo.emoName }</button>
+                <c:forEach var="emoVo" items="${emotionList }" varStatus="status">
+                	<button id="${emoVo.emotionId }" class="emoTag">${emoVo.emotionName }</button>
                 </c:forEach>
                 
                 
@@ -175,8 +188,8 @@
 		                    </li>
 		                    -->  
 		                    
-		                    <c:forEach var="playlistVo" items="${myPlaylist }">
-		                   		<li data-playlistno="${playlistVo.playlistNo }" class="playlistBtn">
+		                    <c:forEach var="playlistVo" items="${playlists }">
+		                   		<li data-playlistno="${playlistVo.playlistId }" class="playlistBtn">
 		                    		<p>${playlistVo.playlistName }</p>
 		                    	</li>
 		                    </c:forEach>  
@@ -225,9 +238,9 @@
         		</li>
 				-->
 				
-                <c:forEach var="emoVo" items="${emoList }" varStatus="status">
+                <c:forEach var="emoVo" items="${emotionList }" varStatus="status">
                 	<li>
-                		<div class="tag" data-emoNo="${emoVo.emoNo }">${emoVo.emoName }</div>
+                		<div class="tag" data-emoNo="${emoVo.emotionId }">${emoVo.emotionName }</div>
                 	</li>
                 </c:forEach>
                 
@@ -236,8 +249,4 @@
         </div>
     </div>
 </body>
-</body>
-<script>
-
-</script>
 </html>

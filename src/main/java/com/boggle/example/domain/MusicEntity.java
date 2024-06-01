@@ -29,4 +29,7 @@ public class MusicEntity {
 	
 	@Column(name = "music_path")
 	private String musicPath;
+	
+	@Column(name = "emotion_id")
+	private Long emotionId;
 }
