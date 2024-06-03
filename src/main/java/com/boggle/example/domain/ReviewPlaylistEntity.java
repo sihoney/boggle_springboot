@@ -50,4 +50,8 @@ public class ReviewPlaylistEntity {
 		this.reviewEntity = review;
 		this.playlistEntity = playlistEntity;
 	}
+	
+	public static ReviewPlaylistEntity of(ReviewEntity reviewEntity, PlaylistEntity playlistEntity) {
+		return new ReviewPlaylistEntity(reviewEntity, playlistEntity);
+	}
 }

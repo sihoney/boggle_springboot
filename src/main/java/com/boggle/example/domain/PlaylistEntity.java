@@ -31,7 +31,6 @@ public class PlaylistEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "playlist_id")
 	private Long playlistId;
-
 	
 	@Column(name = "playlist_name")
 	private String playlistName;
@@ -42,6 +41,9 @@ public class PlaylistEntity {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 	
+	@Column(name = "emotion_id")
+	private Long emotionId;
+	
 	@Transient
 	private Long likeCount;
 	
@@ -50,13 +52,23 @@ public class PlaylistEntity {
 	
 	@Transient
 	private String nickname;
-	
+
 	private PlaylistEntity (String playlistName, Long userId) {
 		this.playlistName = playlistName;
 		this.userId = userId;
 	}
 	
+	private PlaylistEntity (String playlistName, Long userId, Long emotionId) {
+		this.playlistName = playlistName;
+		this.userId = userId;
+		this.emotionId = emotionId;
+	}
+	
 	public static PlaylistEntity of(String playlistName, Long userId) {
 		return new PlaylistEntity(playlistName, userId);
+	}
+	
+	public static PlaylistEntity of(String playlistName, Long userId, Long emotionId) {
+		return new PlaylistEntity(playlistName, userId, emotionId);
 	}
 }

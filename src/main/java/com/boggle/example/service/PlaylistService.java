@@ -115,7 +115,7 @@ public class PlaylistService {
 		List<ReviewEntity> entityList = page.getContent().stream().map(entity -> {
 			ReviewEntity reviewEntity = entity.getReviewEntity();
 			
-			boolean likeByAuthUser = reviewUserRepository.existsByUserIdAndReviewId(authUserId, reviewEntity.getReviewId());
+			boolean likeByAuthUser = reviewUserRepository.existsByUserIdAndReviewEntity(authUserId, reviewEntity);
 			reviewEntity.setLikeByAuthUser(likeByAuthUser);
 			
 			return reviewEntity;
@@ -188,7 +188,7 @@ public class PlaylistService {
 		Iterator<Integer> itr = reviewList.iterator();
 		while(itr.hasNext()) {
 			Long reviewId = (long) itr.next();
-			System.out.println(reviewId);
+			
 			ReviewPlaylistEntity entity = new ReviewPlaylistEntity();
 			
 			entity.setPlaylistEntity(plRepository.findByPlaylistId(playlistId));
@@ -196,6 +196,7 @@ public class PlaylistService {
 			entity.setAddedAt(LocalDateTime.now());
 			
 			ReviewPlaylistEntity result = rvPlRepository.save(entity);
+			
 			System.out.println(result);
 		}
 	}

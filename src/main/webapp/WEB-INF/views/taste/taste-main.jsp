@@ -1,122 +1,128 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>taste-main</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/asset/bootstrap/css/bootstrap.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/all_css.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/taste-main.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/write.css">
-<link rel="stylesheet" href="/bookproject/asset/css/modal.css">
-<script src="${pageContext.request.contextPath}/asset/js/jquery-1.12.4.js"></script>
-<script src="${pageContext.request.contextPath}/asset/bootstrap/js/bootstrap.js"></script>
+	<meta charset="UTF-8">
+	<title>taste</title>
+	
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/taste-main.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/write.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/modal.css">
+	
+	<script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/static/js/more.js"></script>
 </head>
 <!--header-->
 <body>
 	<div id="wrap">
 		<!-- 헤더 -->
 		<c:import url="/WEB-INF/views/include/header.jsp"></c:import>
+		
 		<!-- ------nav------ -->
-		<div id="nav" class="clearfix">
-			<c:choose>
-				<c:when test="${result eq 'sameUser'}">
-					<ul class="nav nav-tabs">
-						<li role="presentation"><a href="${pageContext.request.contextPath}/${nickname}">내 서평</a></li>
-						<li role="presentation" class="active"><a href="${pageContext.request.contextPath}/${nickname}/tastemain">취향저격</a></li>
-						<li role="presentation"><a href="${pageContext.request.contextPath}/${nickname}/like_playlist">플레이리스트</a></li>
-						<!--세션 아이디와 사이트아이디 같을때
-						<li role="presentation"><a href="${pageContext.request.contextPath}/analyze">통계</a></li>
-						-->
-					</ul>
-				</c:when>
-				<c:otherwise>
-					<!-- 세션아이디랑 다를때는 사이트주소의 아이디와 같은 유저의 데이터들 불러오기-->
-					<ul class="nav nav-tabs">
-						<li role="presentation"><a href="${pageContext.request.contextPath}/${nickname}">남 서평</a></li>
-						<li role="presentation" class="active"><a href="${pageContext.request.contextPath}/${nickname}/tastemain">취향저격</a></li>
-						<li role="presentation"><a href="${pageContext.request.contextPath}/${nickname}/like_playlist">플레이리스트</a></li>
-					</ul>
-				</c:otherwise>
-			</c:choose>
-		</div>
-		<!-- ------nav------ -->
+		<c:import url="/WEB-INF/views/include/nav.jsp">
+			<c:param name="path" value="taste" />
+		</c:import>
+		
 		<!-- ------nav2------ -->
 		<ul id="nav2" class="nav nav-pills">
 			<!-- 세션아이디와 비교, 다를경우 '이름님의 취향' -->
 			<!-- <li role="presentation" class="active"><a href="">'유저이름'님의 취향</a></li> -->
-			<li role="presentation" class="active"><a href="${pageContext.request.contextPath}/${nickname}/tastemain">my 취향</a></li>
-			<li role="presentation"><a href="${pageContext.request.contextPath}/${nickname}/tastereview">좋아요한 서평</a></li>
-			<li role="presentation"><a href="${pageContext.request.contextPath}/${nickname}/main_book">관심가는 책</a></li>
+			<li role="presentation" class="active"><a href="${pageContext.request.contextPath}/${nickname}/taste">my 취향</a></li>
+			<li role="presentation"><a href="${pageContext.request.contextPath}/${nickname}/taste/reviews">좋아요한 서평</a></li>
+			<li role="presentation"><a href="${pageContext.request.contextPath}/${nickname}/taste/books">관심가는 책</a></li>
 		</ul>
+		<!-- ------nav2------ -->
+		<!-- ------content(1-4)------ -->
 		<div id="content">
 			<!--content1-->
 			<div id="content1">
 				<div class="minicontent">
 					<div class="left">
-						<c:choose>
-							<c:when test="${result eq 'sameUser'}">
-								<p>'${nickname}'님이 좋아요한 서평</p>
-							</c:when>
-							<c:otherwise>
-								<p>'${otherUser.nickname}'님이 좋아요한 서평</p>
-							</c:otherwise>
-						</c:choose>
+						<p>'${nickname}'님이 좋아요한 서평</p>
 					</div>
 					<div class="right" id="more">
 						<p>
-							<a href="${pageContext.request.contextPath}/${nickname}/tastereview">더보기</a><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+							<a href="${pageContext.request.contextPath}/${nickname}/taste/reviews">더보기</a><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
 						</p>
 					</div>
 				</div>
 				<!-- 서평 리스트 -->
-				<c:forEach items="${like1 }" var="vo">
-					<div id="reviews">
-						<div id="reviews-header">
-							<div class="left">
-								<p>
-									<a href="${pageContext.request.contextPath}/bookdetail?bookNo=${vo.bookNo}&userNo=${vo.userNo}">${vo.bookTitle }</a>
-								</p>
-							</div>
-							<!-- 작성자아이디와 세션아이디가 동일할 시에만 보이게 -->
-							<div class="right">
-								<c:if test="${result eq 'sameUser'}">
-									<a href="${pageContext.request.contextPath}/review/write?reviewNo=${vo.reviewNo}">수정</a>
-									<a class="delete" data-reviewno="${vo.reviewNo }">삭제</a>
-								</c:if>
-							</div>
-						</div>
-						<!-- 작성자아이디와 세션아이디가 동일할 경우에는 안보이게 -->
-						<div id="reviewer">
-							<a>${vo.nickname }</a>
-						</div>
-						<div id="reviews-content">
-							<p>${vo.reviewContent }</p>
-							<span class="label label-default">${vo.emoName }</span>
-						</div>
-						<div id="reviews-footer">
-							<div class="left">
-								<span class="like" data-reviewno="${vo.reviewNo }" id="heart" class="glyphicon glyphicon-heart" aria-hidden="true"></span> <span class="likecnt" data-likecnt="${vo.likecnt}">${vo.likecnt }</span> <span>${vo.reviewDate }</span>
-							</div>
-							<div class="right">
-								<div class="dropup">
-									<a id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 더보기 <span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu2">
-										<li role="presentation"><a class="add_pli" data-userno="${vo.userNo }" data-reviewno="${vo.reviewNo }" id="add_pli" role="menuitem" tabindex="-1">플레이리스트에 추가<span id="plus">+</span></a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a id="shr_review" role="menuitem" tabindex="-1">서평 공유하기<span class="glyphicon glyphicon-share" aria-hidden="true"></span></a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation">
-										<li role="presentation"><a id="save_img" role="menuitem" target="_blank" tabindex="-1" href="${pageContext.request.contextPath}/imgpreview">이미지 미리보기<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
-										</a></li>
-									</ul>
+				<c:choose>
+					<c:when test="${empty reviewList }">
+						<div>리스트가 없습니다.</div>
+					</c:when>
+					<c:otherwise>
+						<c:forEach items="${reviewList }" var="vo">
+							<div id="reviews">
+								<div id="reviews-header">
+									<div class="left">
+										<p>
+											<a href="${pageContext.request.contextPath}/book/${vo.bookEntity.isbn}">${vo.bookEntity.bookName }</a>
+										</p>
+									</div>
+									<!-- 작성자아이디와 세션아이디가 동일할 시에만 보이게 -->
+									<div class="right">
+										<c:if test="${sessionScope.authUser.nickname eq nickname}">
+											<a href="${pageContext.request.contextPath}/review/write?reviewNo=${vo.bookEntity.isbn}">수정</a>
+											<a class="delete" data-reviewno="${vo.reviewId }">삭제</a>
+										</c:if>
+									</div>
+								</div>
+								<!-- 작성자아이디와 세션아이디가 동일할 경우에는 안보이게 -->
+								<div id="reviewer">
+									<a>${vo.nickname }</a>
+								</div>
+								<div id="reviews-content">
+									<p>${vo.content }</p>
+									<span class="label label-default">${vo.emotionEntity.emotionName }</span>
+								</div>
+								<div id="reviews-footer">
+									<div class="left">
+										<!-- 하트 아이콘 -->
+					 					<c:choose>
+					 						<c:when test="${vo.likeByAuthUser}">
+					 							<span id="heart" class="like glyphicon glyphicon-heart" data-reviewid="${reviewObj.reviewId }" aria-hidden="true"></span> 
+					 							<span class="likecnt" data-likecnt="${vo.likeCount}">${vo.likeCount }</span> 
+					 							<span>${vo.createdAt }</span>
+					 						</c:when>
+					 						<c:otherwise>
+					 							<span id="heart" class="like glyphicon glyphicon-heart-empty" data-reviewid="${reviewObj.reviewId }" aria-hidden="true"></span> 
+					 							<span class="likecnt" data-likecnt="${vo.likeCount}">${vo.likeCount }</span> 
+					 							<span>${vo.createdAt }</span>					 			
+					 						</c:otherwise>
+					 					</c:choose>
+									
+										<%-- 
+										<span class="like" data-reviewno="${vo.reviewId }" id="heart" class="glyphicon glyphicon-heart" aria-hidden="true"></span> 
+										<span class="likecnt" data-likecnt="${vo.likeCount}">${vo.likeCount }</span> 
+										<span>${vo.createdAt }</span> 
+										--%>
+									</div>
+									<div class="right">
+										<div class="dropup">
+											<a id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 더보기 <span class="caret"></span>
+											</a>
+											<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu2">
+												<li role="presentation"><a class="add_pli" data-userno="${vo.userId }" data-reviewno="${vo.reviewId }" id="add_pli" role="menuitem" tabindex="-1">플레이리스트에 추가<span id="plus">+</span></a></li>
+												<li role="presentation" class="divider"></li>
+												<li role="presentation"><a id="shr_review" role="menuitem" tabindex="-1">서평 공유하기<span class="glyphicon glyphicon-share" aria-hidden="true"></span></a></li>
+												<li role="presentation" class="divider"></li>
+												<li role="presentation">
+												<li role="presentation"><a id="save_img" role="menuitem" target="_blank" tabindex="-1" href="${pageContext.request.contextPath}/imgpreview">이미지 미리보기<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+												</a></li>
+											</ul>
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-				</c:forEach>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
 				<!-- 서평 -->
 			</div>
 			<!--content1-->
@@ -124,28 +130,29 @@
 			<div id="content2">
 				<div class="minicontent">
 					<div class="left">
-						<c:choose>
-							<c:when test="${result eq 'sameUser'}">
-								<p>'${nickname}'님이 좋아요한 유저</p>
-							</c:when>
-							<c:otherwise>
-								<p>'${otherUser.nickname}'님이 좋아요한 유저</p>
-							</c:otherwise>
-						</c:choose>
+						<p>'${nickname}'님이 좋아요한 유저</p>
 					</div>
 				</div>
-				<div>
-					<c:forEach items="${likelist}" var="vo">
-						<div class="likewriter">
-							<a href="${pageContext.request.contextPath}/${vo.nickname}"> <img src="${vo.userPro }" onerror="this.src='${pageContext.request.contextPath}/asset/img/profile.png'" class="img-circle">
-							</a>
-							<div id="writerinfo">
-								<h1>${vo.nickname}</h1>
-								<p>서평 수 : ${vo.likecheck }</p>
-							</div>
-							<p class="word">${vo.reviewContent }</p>
-						</div>
-					</c:forEach>
+				<div id="wrap-userList">
+					<c:choose>
+						<c:when test="${empty userList }">
+							<div>리스트가 없습니다.</div>
+						</c:when>
+						<c:otherwise>
+							<c:forEach items="${userList}" var="vo">
+								<div class="likewriter">
+									<a href="${pageContext.request.contextPath}/${vo.nickname}/mybook"> 
+										<img src="${pageContext.request.contextPath}/resources/static/images/user_profile/${vo.userProfile }" onerror="this.src='${pageContext.request.contextPath}/resources/static/images/user_profile/profile.png'" class="img-circle">
+									</a>
+									<div id="writerinfo">
+										<h1>${vo.nickname}</h1>
+										<p>서평 수 : ${vo.totalReviewCount }</p>
+									</div>
+									<p class="word">${vo.recentReviewContent }</p>
+								</div>
+							</c:forEach>							
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 			<!--content2-->
@@ -153,14 +160,7 @@
 			<div id="content3">
 				<div class="minicontent">
 					<div class="left">
-						<c:choose>
-							<c:when test="${result eq 'sameUser'}">
-								<p>'${nickname}'님이 관심있는 책</p>
-							</c:when>
-							<c:otherwise>
-								<p>'${otherUser.nickname}'님이 관심있는 책</p>
-							</c:otherwise>
-						</c:choose>
+						<p>'${nickname}'님이 관심있는 책</p>
 					</div>
 					<div class="right" id="more">
 						<p>
@@ -170,10 +170,18 @@
 				</div>
 				<div id="background">
 					<div>
-						<c:forEach items="${get5book}" var="vo">
-							<a class="a" href="${pageContext.request.contextPath}/bookdetail?bookNo=${vo.bookNo}&userNo=${vo.userNo}"> <img class="cover" src="${vo.cover_url }" alt="image" />
-							</a>
-						</c:forEach>
+						<c:choose>
+							<c:when test="${empty bookList }">
+								리스트가 없습니다.
+							</c:when>
+							<c:otherwise>
+								<c:forEach items="${bookList}" var="vo">
+									<a class="a" href="${pageContext.request.contextPath}/book/${vo.isbn}"> 
+										<img class="cover" src="${vo.coverUrl }" alt="image" />
+									</a>
+								</c:forEach>							
+							</c:otherwise>
+						</c:choose>											
 					</div>
 				</div>
 			</div>
@@ -182,14 +190,7 @@
 			<div id="content4">
 				<div class="minicontent">
 					<div class="left">
-						<c:choose>
-							<c:when test="${result eq 'sameUser'}">
-								<p>'${nickname}'님이 좋아요한 플레이리스트</p>
-							</c:when>
-							<c:otherwise>
-								<p>'${otherUser.nickname}'님이 좋아요한 플레이리스트</p>
-							</c:otherwise>
-						</c:choose>
+						<p>'${nickname}'님이 좋아요한 플레이리스트</p>
 					</div>
 					<div class="right" id="more">
 						<p>
@@ -201,32 +202,42 @@
 					<p class="index">오늘의 플레이리스트를 확인해보세요!</p>
 				</div>
 				<div id="playlist">
-					<c:forEach items="${likeplay}" var="vo">
-						<div class="nail purple">
-							<!-- 1~14까지 감정으로색깔 -->
-							<div onclick="location.href='${pageContext.request.contextPath}/playlist/folder?playlistNo=${vo.playlistNo }&userNo=${vo.userNo }&nickname=${vo.nickname}'" class="nail-desc">
-								<p>${vo.playlistName }</p>
-							</div>
-							<div>
-								<div onclick="location.href='${pageContext.request.contextPath}/main?playlistNo=${vo.playlistNo }'" id="opac">
-									<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+					<c:choose>
+						<c:when test="${empty plList }">
+							리스트가 없습니다.
+						</c:when>
+						<c:otherwise>
+							<c:forEach items="${plList}" var="vo">
+								<div class="nail purple">
+									<!-- 1~14까지 감정으로색깔 -->
+									<div onclick="location.href='${pageContext.request.contextPath}/playlist_folder/${vo.playlistId }'" class="nail-desc">
+										<p>${vo.playlistName }</p>
+									</div>
+									<div>
+										<div onclick="location.href='${pageContext.request.contextPath}/main?playlistNo=${vo.playlistId }'" id="opac">
+											<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+										</div>
+									</div>
 								</div>
-							</div>
-						</div>
-					</c:forEach>
+							</c:forEach>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 			<!--content4-->
 		</div>
+		<!-- ------content(1-4)------ -->
 		<!-- footer -->
 		<c:import url="/WEB-INF/views/include/footer.jsp"></c:import>
-		<!-- modal창 
-		<c:import url="/WEB-INF/views/include/modal.jsp"></c:import>-->
+		<!-- modal창 -->
+		<c:import url="/WEB-INF/views/include/modal.jsp"></c:import>
 	</div>
+	
 	<!--wrap-->
 	<div class="msg_modal unstaged">
 		<p>저장되었습니다</p>
 	</div>
+	
 	<div class="modal_myply unstaged">
 		<div class="modal_ply_header">
 			<p>My 플레이리스트</p>
@@ -443,5 +454,4 @@
 		});
 	});
 </script>
-<script src="${pageContext.request.contextPath}/asset/js/more.js"></script>
 </html>

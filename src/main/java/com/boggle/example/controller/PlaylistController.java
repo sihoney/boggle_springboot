@@ -8,11 +8,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boggle.example.domain.PlaylistEntity;
 import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.ReviewUserEntity;
+import com.boggle.example.dto.CustomUserDetails;
 import com.boggle.example.service.MyBookService;
 import com.boggle.example.service.PlaylistService;
 import com.boggle.example.util.PagingUtil;
@@ -48,20 +48,26 @@ public class PlaylistController {
 	public String playlist(
 			@PathVariable(value = "nickname", required = true) String nickname, 
 		    HttpSession session, 
-		    Model model
+		    Model model,
+		    @AuthenticationPrincipal CustomUserDetails userDetails
 			) {
 		System.out.println("PlaylistController.playlist()");
 		
-		if (session.getAttribute("authUser") == null || 
-				session.getAttribute("authUser").equals("") || 
-				nickname.equals(null)) {
-			   System.out.println("세션만료 혹은 잘못된 접근");
-			   
-			   return "/WEB-INF/views/user/loginForm.jsp";
-		}		
-		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");  
+//		if (session.getAttribute("authUser") == null || 
+//				session.getAttribute("authUser").equals("") || 
+//				nickname.equals(null)) {
+//			   System.out.println("세션만료 혹은 잘못된 접근");
+//			   
+//			   return "/WEB-INF/views/user/loginForm.jsp";
+//		}		
+//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");  
 		
-		if(!Objects.isNull(authUser) && nickname.equals(authUser.getNickname())) {
+//		if(!Objects.isNull(authUser) && nickname.equals(authUser.getNickname())) {
+//			model.addAttribute("result", "sameUser");
+//		} else {
+//			model.addAttribute("result", "otherUser");
+//		}
+		if(nickname.equals(userDetails.getNickname())) {
 			model.addAttribute("result", "sameUser");
 		} else {
 			model.addAttribute("result", "otherUser");
@@ -81,18 +87,19 @@ public class PlaylistController {
 			@PathVariable(value = "playlistId") Long playlistId,
 			@PageableDefault(size = PAGE_SIZE, page = CURRENT_PAGE) Pageable pageable,
 			Model model,
-			HttpSession session
+			HttpSession session,
+			@AuthenticationPrincipal CustomUserDetails userDetails
 			) {
 		System.out.println("PlaylistController.playlistFolder()");
 		
-		if (session.getAttribute("authUser") == null ) {
-			   System.out.println("세션만료 혹은 잘못된 접근");
-			   
-			   return "/WEB-INF/views/user/loginForm.jsp";
-		}	
-		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+//		if (session.getAttribute("authUser") == null ) {
+//			   System.out.println("세션만료 혹은 잘못된 접근");
+//			   
+//			   return "/WEB-INF/views/user/loginForm.jsp";
+//		}	
+//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 
-		Map<String, Object> map = plService.getPlaylistFolder(authUser.getUserId(), playlistId, pageable);
+		Map<String, Object> map = plService.getPlaylistFolder(userDetails.getUserId(), playlistId, pageable);
 		
 		model.addAttribute("reviewList", map.get("reviewList"));
 		model.addAttribute("playlistCover", map.get("playlistCover"));
@@ -110,16 +117,17 @@ public class PlaylistController {
 	public ResponseEntity<Map<String, Object>> getPlaylistFolder(
 			@PathVariable(value = "playlistId") Long playlistId,
 			@PageableDefault(size = PAGE_SIZE, page = CURRENT_PAGE) Pageable pageable,
-			HttpSession session 
+			HttpSession session,
+			@AuthenticationPrincipal CustomUserDetails userDetails
 			) {
 		System.out.println("PlaylistController.getPlaylistFolder()");
 		
-		if (session.getAttribute("authUser") == null) {
-			   System.out.println("세션만료 혹은 잘못된 접근");
-		}
-		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+//		if (session.getAttribute("authUser") == null) {
+//			   System.out.println("세션만료 혹은 잘못된 접근");
+//		}
+//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 		
-		Map<String, Object> map = plService.getPlaylistFolder(authUser.getUserId(), playlistId, pageable);
+		Map<String, Object> map = plService.getPlaylistFolder(userDetails.getUserId(), playlistId, pageable);
 				
 		return ResponseEntity.ok(map);
 	}
@@ -129,35 +137,37 @@ public class PlaylistController {
 	@RequestMapping("/playlist_user")
 	public Long addplaylistLike(
 			@RequestParam(value="playlistId") Long playlistId,
-			HttpSession session
+			HttpSession session,
+			@AuthenticationPrincipal CustomUserDetails userDetails
 			) {
 		System.out.println("Controller.addplaylistLike");
 		
-		if (session.getAttribute("authUser") == null) {
-			   System.out.println("세션만료 혹은 잘못된 접근");
-		}
-		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+//		if (session.getAttribute("authUser") == null) {
+//			   System.out.println("세션만료 혹은 잘못된 접근");
+//		}
+//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 
-		return plService.toggleLikePlaylist(authUser.getUserId(), playlistId);
+		return plService.toggleLikePlaylist(userDetails.getUserId(), playlistId);
 	}
 	
 	/* 서평 좋아요 & 좋아요 취소 */
 	@ResponseBody
 	@PostMapping("/review_user")
-	public Long toggleLikeReview(
+	public ResponseEntity<Object> toggleLikeReview(
 			@RequestParam("reviewId") Long reviewId,
-			HttpSession session
+			HttpSession session,
+			@AuthenticationPrincipal CustomUserDetails userDetails
 		) {
 		System.out.println("PlaylistController.toggleLikeReview");
 		
-		if (session.getAttribute("authUser") == null) {
-			   System.out.println("세션만료 혹은 잘못된 접근");
-		}
-		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+//		if (session.getAttribute("authUser") == null) {
+//			   System.out.println("세션만료 혹은 잘못된 접근");
+//		}
+//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 
-		ReviewUserEntity entity = mybookService.likeOrDislikeReview(authUser.getUserId(), reviewId);
+		Integer httpStatus = mybookService.likeOrDislikeReview(userDetails.getUserId(), reviewId);
 		
-		return entity.getReviewUserId();
+		return ResponseEntity.status(httpStatus).build();
 	}
 	
 	/* 플리에서 서평 삭제 */
@@ -186,16 +196,17 @@ public class PlaylistController {
 	public ResponseEntity<Map<String, Object>> modalListPage(
 			@PageableDefault(size = MODAL_PAGE_SIZE, page = CURRENT_PAGE) Pageable pageable,
 			@RequestParam(required = false) String query,
-			HttpSession session
+			HttpSession session,
+			@AuthenticationPrincipal CustomUserDetails userDetails
 			) {
 		System.out.println("Controller.modalListPage");
 		
-		if (session.getAttribute("authUser") == null) {
-			   System.out.println("세션만료 혹은 잘못된 접근");
-		}
-		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+//		if (session.getAttribute("authUser") == null) {
+//			   System.out.println("세션만료 혹은 잘못된 접근");
+//		}
+//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 
-		Page<ReviewEntity> page = plService.getAllReviewByUserId(authUser.getUserId(), query, pageable);
+		Page<ReviewEntity> page = plService.getAllReviewByUserId(userDetails.getUserId(), query, pageable);
 		Map<String, Integer> pagination = PagingUtil.pagination((int) page.getTotalElements(), MODAL_PAGE_SIZE, pageable.getPageNumber() + 1);
 		
 		return ResponseEntity.ok(Map.of(
@@ -214,10 +225,10 @@ public class PlaylistController {
 			) {
 		System.out.println("PlaylistController.addReviews");
 		
-		if (session.getAttribute("authUser") == null) {
-			   System.out.println("세션만료 혹은 잘못된 접근");
-		}
-		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+//		if (session.getAttribute("authUser") == null) {
+//			   System.out.println("세션만료 혹은 잘못된 접근");
+//		}
+//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 		
 		plService.addReviewListToPl(checkedReview, playlistId);
 		

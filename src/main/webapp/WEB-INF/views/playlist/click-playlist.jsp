@@ -28,32 +28,10 @@
 		<c:import url="/WEB-INF/views/include/header.jsp"></c:import>
 		<!-- ------header------ -->
 
-		<!-- ------nav------ -->
-		<nav id="nav" class="clearfix">
-			<c:choose>
-				<c:when test="${playlistCover.nickname eq authUser.nickname}">
-					<ul class="nav nav-tabs">
-						<li role="presentation"><a href="${pageContext.request.contextPath}/${authUser.nickname}/mybook">내 서평</a></li>
-						<li role="presentation"><a href="${pageContext.request.contextPath}/${authUser.nickname}/tastemain">취향저격</a></li>
-						<li role="presentation" class="active"><a href="${pageContext.request.contextPath}/${authUser.nickname}/playlist">플레이리스트</a></li>
-						<!-- <li role="presentation" class="active"><a href="${pageContext.request.contextPath}/${param.nickname}/like_playlist">플레이리스트</a></li> -->
-						
-						<!--세션 아이디와 사이트아이디 같을때-->
-						<!-- <li role="presentation"><a href="${pageContext.request.contextPath}/analyze">통계</a></li> -->
-					</ul>
-				</c:when>
-				<c:otherwise>
-					<!-- 세션아이디랑 다를때는 사이트주소의 아이디와 같은 유저의 데이터들 불러오기-->
-					<ul class="nav nav-tabs">
-						<li role="presentation"><a href="${pageContext.request.contextPath}/${param.nickname}/mybook">남 서평</a></li>
-						<li role="presentation"><a href="${pageContext.request.contextPath}/${param.nickname}/tastemain">취향저격</a></li>
-						<li role="presentation" class="active"><a href="${pageContext.request.contextPath}/${param.nickname}/playlist">플레이리스트</a></li>
-					</ul>
-				</c:otherwise>
-			</c:choose>
-		</nav>
-		<!-- ------nav------ -->
-
+		<c:import url="/WEB-INF/views/include/nav.jsp">
+			<c:param name="path" value="playlist" />
+		</c:import>
+		
 		<!-- cover -->
 		<div id="playlist-cover" class="clearfix">
 			<div class="float-l">

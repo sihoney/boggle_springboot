@@ -4,14 +4,11 @@ import java.util.List;
 
 import javax.persistence.Tuple;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.boggle.example.domain.PlaylistEntity;
-import com.boggle.example.domain.ReviewEntity;
 
 public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long>{
 	
@@ -33,6 +30,8 @@ public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long>{
 			"LEFT JOIN users u ON p.userId = u.userId " + 
 			"WHERE p.playlistId = ?1")
 	Tuple getByPlaylistId(Long playlistId);
+
+	List<PlaylistEntity> findAllByUserId(Long userId);
 	
 //    @Query("SELECT p.reviews FROM PlaylistEntity p WHERE p.playlistId = :playlistId")
 //    Page<ReviewEntity> findReviewsByPlaylistId(@Param("playlistId") Long playlistId, Pageable pageable);

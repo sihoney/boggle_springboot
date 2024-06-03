@@ -1,5 +1,7 @@
 package com.boggle.example.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +25,8 @@ public interface ReviewPlaylistRepository extends JpaRepository<ReviewPlaylistEn
 //	Page<ReviewPlaylistEntity> findAllByPlaylistId(Long playlistId, Pageable pageable);
 	
 	Page<ReviewPlaylistEntity> findAllByPlaylistEntity(PlaylistEntity playlistEntity, Pageable pageable);
+
+	boolean existsByReviewEntityAndPlaylistEntity(ReviewEntity reviewEntity, PlaylistEntity playlistEntity);
+
+	Optional<ReviewPlaylistEntity> findByReviewEntityAndPlaylistEntity(ReviewEntity reviewEntity, PlaylistEntity playlistEntity);
 }
