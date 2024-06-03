@@ -1,6 +1,5 @@
 package com.boggle.example.controller;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -8,11 +7,15 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.ReviewUserEntity;
+import com.boggle.example.dto.CustomUserDetails;
 import com.boggle.example.service.MyBookService;
 import com.boggle.example.util.EmotionEnum;
 import com.boggle.example.util.PagingUtil;
@@ -35,94 +38,61 @@ public class MyBookController {
 	MyBookService mybookService;
 	
 //	mybook 페이지
+//	@Secured("ROLE_ADMIN")
 	@RequestMapping("/{nickname}/mybook")
 	public String mybook (
 			@PathVariable(value = "nickname", required=true) String nickname,
 			HttpSession session,
-			Model model
+			Model model,
+			@PageableDefault(size = 8, page = 0, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, //, sort = "createdAt,desc"
+			@AuthenticationPrincipal CustomUserDetails userDetails
 			) {
 		System.out.print("MyBookService.mybook(), ");
 		System.out.println("nickname: " + nickname);
 		
-		  if (session == null 
-				  || session.getAttribute("authUser") == null 
-				  || session.getAttribute("authUser").equals("")
-				  || nickname.equals(null)) {
-			   System.out.println("세션만료 혹은 잘못된 접근");
-			   
-			   return "/WEB-INF/views/user/loginForm.jsp";
-		   }
+//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
+		Page<ReviewEntity> pageObj = mybookService.getReviewsByCreatedAt(nickname, null, pageable, userDetails.getUserId());
+		Map<String, Integer> map = PagingUtil.pagination((int) pageObj.getTotalElements(), pageable.getPageSize(), pageable.getPageNumber() + 1);
 		
-		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");  
-		if(!Objects.isNull(authUser) && nickname.equals(authUser.getNickname())) {
-			model.addAttribute("result", "sameUser");
-		} else {
-			model.addAttribute("result", "otherUser");
-		}	
-		
+		model.addAttribute("nickname", nickname);
 		model.addAttribute("emotionList", EmotionEnum.getList());
 		model.addAttribute("userProfile", mybookService.getUserProfile(nickname));
-		
-		int page = 0;
-		int size = 8;
-		Sort sort = Sort.by(Sort.Order.desc("createdAt"));
-		Page<ReviewEntity> pageObj = mybookService.getReviewsByCreatedAt(nickname, null, PageRequest.of(page, size, sort), authUser.getUserId());
 		model.addAttribute("reviewList", pageObj.getContent());
-		
-		model.addAttribute("sort", pageObj.getPageable().getSort().toString());
-		
-		Map<String, Integer> map = PagingUtil.pagination(
-				(int) pageObj.getTotalElements(), 
-				size, 
-				page + 1);
-		ArrayList<Integer> pagination = new ArrayList<>();
-		Integer startPage = map.get("startPage");
-		Integer endPage = map.get("endPage");
-		while(true) {
-			if(startPage > endPage)
-				break;
-			pagination.add(startPage);
-			
-			startPage++;
-		}
-		model.addAttribute("pagination", pagination);
+//		model.addAttribute("sort", pageObj.getPageable().getSort().toString());
+		model.addAttribute("startPage", map.get("startPage"));
+		model.addAttribute("endPage", map.get("endPage"));
 		
 		return "/WEB-INF/views/mybook/mybook_review.jsp";
 	}
 
 //	서평 리스트 api
    @ResponseBody  
-   @RequestMapping("/{userId}/reviews")   
+   @RequestMapping("/api/reviews")   
    public ResponseEntity<ReviewListResponse> getReviews (
-		   @PathVariable(value="userId", required=true) String userId,
+//		   @PathVariable(value="userId", required=true) String userId,
+		   @RequestParam(value = "userId", required=false) Long userId,
 		   @RequestParam(value = "emotionName", required=false) String emotionName,
 		   HttpSession session, 
-           Pageable pageable
+           @PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+           @AuthenticationPrincipal CustomUserDetails userDetails
            ){
 	   System.out.println("MyBookController.getReviews()");
 
-	   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-	   
-	  if (Objects.isNull(authUser) || Objects.isNull(userId)) {
-		   System.out.println("세션 만료");
-		   return ResponseEntity.badRequest().build();
-	   }
-	  
-	  pageable = PageRequest.of(
-			  pageable.getPageNumber() - 1, 
-			  pageable.getPageSize(),
-			  pageable.getSort());
-
-	  Page<ReviewEntity> pageObj;
+//	   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
+//	  if (Objects.isNull(authUser)) {
+//		   System.out.println("세션 만료");
+//		   return ResponseEntity.badRequest().build();
+//	   }
 	  
 	  String property = pageable.getSort().get().findFirst().orElse(null).getProperty();
 
+	  Page<ReviewEntity> pageObj;
 	  if(property.equals("likeCount")) {
 		  System.out.println(">> 인기순");
 		  
 		  pageObj = mybookService.getReviewsOrderByLikeCount(
-				  Long.parseLong(userId), 
-				  authUser.getUserId(), 
+				  userId, 
+				  userDetails.getUserId(), 
 				  pageable);
 	  }
 	  else if("undefined".equals(emotionName) || "null".equals(emotionName) || Objects.isNull(emotionName) ) {
@@ -130,18 +100,18 @@ public class MyBookController {
 		  
 		  pageObj = mybookService.getReviewsByCreatedAt(
 				  null, 
-				  Long.parseLong(userId), 
+				  userId, 
 				  pageable, 
-				  authUser.getUserId());
+				  userDetails.getUserId());
 	  }
 	  else {
 		  System.out.println(">> 감정별");
 		  
 		  pageObj = mybookService.getReviewByEmotion(
-				  Long.parseLong(userId), 
+				  userId, 
 				  emotionName, 
 				  pageable, 
-				  authUser.getUserId());
+				  userDetails.getUserId());
 	  }
 
 	   Map<String, Integer> map = PagingUtil.pagination(
@@ -162,16 +132,16 @@ public class MyBookController {
 //   서평 좋아요
    @ResponseBody
    @RequestMapping("/reviewUser")
-   public ResponseEntity<ReviewUserEntity> like(
+   public ResponseEntity<String> like(
 		   HttpSession session,
-		   @RequestBody LikeRequest likeRequest) {
+		   @RequestBody LikeRequest likeRequest,
+		   @AuthenticationPrincipal CustomUserDetails userDetails
+		   ) {
 	   System.out.println("MyBookController.like()");
 
-	   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-
-	   ReviewUserEntity reviewUserEntityResult = mybookService.likeOrDislikeReview(authUser.getUserId(), likeRequest.getReviewId());
-
-	   return ResponseEntity.ok(reviewUserEntityResult);
+//	   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
+	   Integer result = mybookService.likeOrDislikeReview(userDetails.getUserId(), likeRequest.getReviewId());
+	   return ResponseEntity.status(result).build();
    }
    
 //   서평 삭제
@@ -180,20 +150,21 @@ public class MyBookController {
    public ResponseEntity deleteReview(
 		   @PathVariable Long reviewId,
 //		   @RequestParam(name = "reviewId", required=true) Long reviewId,
-		   HttpSession session
+		   HttpSession session,
+		   @AuthenticationPrincipal CustomUserDetails userDetails
 		   ) {	   
 	   try {
 		   System.out.println("MyBookController.deleteReview()");
 		   
-		   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-		   if(Objects.isNull(authUser)) {
-			   return new ResponseEntity<>(
-					   "세션 정보 만료", 
-					   HttpStatus.BAD_GATEWAY
-					   );
-		   }
+//		   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
+//		   if(Objects.isNull(authUser)) {
+//			   return new ResponseEntity<>(
+//					   "세션 정보 만료", 
+//					   HttpStatus.BAD_GATEWAY
+//					   );
+//		   }
 
-		   mybookService.deleteReview(authUser.getUserId(), reviewId); 
+		   mybookService.deleteReview(userDetails.getUserId(), reviewId); 
 		   
 		   return new ResponseEntity<>(
 				   "Entity with ID " + reviewId + " has been deleted successfully", 

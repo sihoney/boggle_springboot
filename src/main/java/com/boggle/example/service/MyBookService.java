@@ -2,13 +2,16 @@ package com.boggle.example.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +37,7 @@ public class MyBookService {
 	@Autowired
 	EmotionRepository emotionRepository;
 	@Autowired
-	ReviewUserRepository reviewUserRepository;
+	ReviewUserRepository rvUsRepository;
 	@Autowired
 	ReviewPlaylistRepository reviewPlaylistRepository;
 	
@@ -50,6 +53,7 @@ public class MyBookService {
 				userEntity.getUserProfile());
 	}
 	
+//	최신순, 오래된순
 	@Transactional(readOnly = true)
 	public Page<ReviewEntity> getReviewsByCreatedAt(String nickname, Long userId, Pageable pageable, Long authUserId) {
 		
@@ -59,13 +63,42 @@ public class MyBookService {
 		
 		Page<ReviewEntity> reviewList = reviewRepository.findAllByUserId(userId, pageable);
 		reviewList.getContent().stream().forEach(reviewEntity -> {
-			reviewEntity.setLikeCount(reviewEntity.getReviewUserEntityList().size()); //reviewUserRepository.getLikeCount(reviewEntity.getReviewId())
-			reviewEntity.setLikeByAuthUser(reviewUserRepository.existsByUserIdAndReviewId(authUserId, reviewEntity.getReviewId()));
+//			reviewEntity.setLikeCount(reviewEntity.getReviewUserEntityList().size()); //rvUsRepository.getLikeCount(reviewEntity.getReviewId())
+			reviewEntity.setLikeCount(rvUsRepository.countByUserIdAndReviewEntity(authUserId, reviewEntity));
+			reviewEntity.setLikeByAuthUser(rvUsRepository.existsByUserIdAndReviewEntity(authUserId, reviewEntity));
 		});
 
 		return reviewList;
 	}
 	
+//	인기순
+	@Transactional
+	public Page<ReviewEntity> getReviewsOrderByLikeCount(Long userId, Long authUserId, Pageable pageable) {
+		
+        Page<ReviewEntity> page = reviewRepository.findAllByUserId(userId, PageRequest.of(pageable.getPageNumber(),
+        																					pageable.getPageSize()));
+		List<ReviewEntity> list = page.getContent().stream().map(entity -> {
+//			ReviewEntity reviewEntity = entity.getReviewEntity();
+			
+//			entity.setLikeCount(entity.getReviewUserEntityList().size());
+			entity.setLikeCount(rvUsRepository.countByUserIdAndReviewEntity(authUserId, entity));
+			entity.setLikeByAuthUser(rvUsRepository.existsByUserIdAndReviewEntity(authUserId, entity));
+						
+			return entity;
+		}).collect(Collectors.toList());
+		
+		List<ReviewEntity> sortedEntities = new ArrayList<>(list);
+		sortedEntities.sort((entity1, entity2) -> {
+			return entity2.getLikeCount() - entity1.getLikeCount();
+		});
+		
+		System.out.println(page);
+		System.out.println(sortedEntities);
+		
+		return new PageImpl<>(sortedEntities, page.getPageable(), page.getTotalElements());
+	}
+
+//	감정순
 	@Transactional(readOnly = true)
 	public Page<ReviewEntity> getReviewByEmotion(Long userId, String emotionName, Pageable pageable, Long authUserId) {
 		System.out.println("MyBookService.getReviewByEmotion()");
@@ -78,62 +111,45 @@ public class MyBookService {
 			pageable
 		);
 		reviewList.getContent().stream().forEach(reviewEntity -> {
-			reviewEntity.setLikeCount(reviewEntity.getReviewUserEntityList().size()); //reviewUserRepository.getLikeCount(reviewEntity.getReviewId())
-			reviewEntity.setLikeByAuthUser(reviewUserRepository.existsByUserIdAndReviewId(authUserId, reviewEntity.getReviewId()));
+//			reviewEntity.setLikeCount(reviewEntity.getReviewUserEntityList().size()); //rvUsRepository.getLikeCount(reviewEntity.getReviewId())
+			reviewEntity.setLikeCount(rvUsRepository.countByUserIdAndReviewEntity(authUserId, reviewEntity));
+			reviewEntity.setLikeByAuthUser(rvUsRepository.existsByUserIdAndReviewEntity(authUserId, reviewEntity));
 		});
 		
 		return reviewList;
 	}
 	
+//	서평 좋아요 & 취소
 	@Transactional
-	public ReviewUserEntity likeOrDislikeReview(Long userId, Long reviewId) {
-		
-		// 상태 파악
-		boolean likeReview = reviewUserRepository.existsByUserIdAndReviewId(userId, reviewId);
+	public Integer likeOrDislikeReview(Long userId, Long reviewId) {
 
-		if(likeReview) {
-			System.out.println("삭제");
-			return ReviewUserEntity.of(
-					userId, 
-					reviewUserRepository.deleteByUserIdAndReviewId(userId, reviewId),
-					LocalDateTime.now()
-				);
-		} else {
-			System.out.println("저장");
-			return reviewUserRepository.save(ReviewUserEntity.of(userId, reviewId, LocalDateTime.now()));
-		}
-	}
+	    ReviewEntity reviewEntity = reviewRepository.findByReviewId(reviewId);
+
+	    if (reviewEntity != null) {
+	        ReviewUserEntity existingEntity = rvUsRepository.findByUserIdAndReviewEntity(userId, reviewEntity);
+	        
+	        if (existingEntity != null) {
+	            System.out.println("삭제");
+	            rvUsRepository.delete(existingEntity);
+	            return 200;
+	        } else {
+	            System.out.println("저장");
+	            rvUsRepository.save(ReviewUserEntity.of(userId, reviewEntity, LocalDateTime.now()));
+	            return 201;
+	        }
+	    } else {
+	        // 리뷰를 찾을 수 없음, 예외 처리 또는 로깅을 고려할 수 있음
+	    	System.out.println("리뷰를 찾을 수 없음");
+	        return null;
+	    }
+	}	
 	
-	@Transactional
-	public Page<ReviewEntity> getReviewsOrderByLikeCount(Long userId, Long authUserId, Pageable pageable) {
-		System.out.println("getReviewsOrderByLikeCount()");
-		
-		Page<Object[]> page = reviewRepository.getAllReviewSortByLikeCount(userId, pageable);
-		Iterator<Object[]> itr = page.getContent().iterator();
-
-		List<ReviewEntity> entityList = new ArrayList<>();
-		while(itr.hasNext()) {
-			Object[] obj = itr.next();
-
-			ReviewEntity reviewEntity = (ReviewEntity) obj[0];
-			Long likeCount = (Long) obj[1];
-			
-			reviewEntity.setLikeCount(Integer.valueOf(likeCount.toString()));
-			reviewEntity.setLikeByAuthUser(reviewUserRepository.existsByUserIdAndReviewId(authUserId, reviewEntity.getReviewId()));
-			
-			entityList.add(reviewEntity);
-		}
-		
-		Page<ReviewEntity> sortedPage = new PageImpl<>(entityList, page.getPageable(), page.getTotalElements());
-		
-		return sortedPage;
-	}
-	
+//	서평 삭제
 	@Transactional
 	public void deleteReview(Long userId, Long reviewId) {
 		
 		// 좋아요 기록 삭제
-		reviewUserRepository.deleteByReviewId(reviewId);
+		rvUsRepository.deleteByReviewEntity(reviewRepository.findByReviewId(reviewId));
 		
 		// 플리 목록에서 삭제
 		ReviewEntity reviewEntity = new ReviewEntity();
