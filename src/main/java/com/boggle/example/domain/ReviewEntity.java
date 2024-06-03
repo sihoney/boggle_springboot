@@ -30,7 +30,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity(name = "review")
 @Table(name = "review")
-public class ReviewEntity implements Serializable {
+public class ReviewEntity { //implements Serializable 
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,11 +49,19 @@ public class ReviewEntity implements Serializable {
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
 	
-	@Column(name = "font_id")
-	private Long fontId;
+//	@Column(name = "font_id")
+//	private Long fontId;
 	
-	@Column(name = "wallpaper_id")
-	private Long wallpaperId;
+//	@Column(name = "wallpaper_id")
+//	private Long wallpaperId;
+	
+	@ManyToOne
+	@JoinColumn(name = "font_id")
+	private FontEntity fontEntity;
+	
+	@ManyToOne
+	@JoinColumn(name = "wallpaper_id")
+	private WallpaperEntity wallpaperEntity;
 	
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "isbn")
@@ -63,9 +71,9 @@ public class ReviewEntity implements Serializable {
 	@JoinColumn(name = "emotion_id")
 	private EmotionEntity emotionEntity;
 	
-	@OneToMany
-	@JoinColumn(name = "review_id", referencedColumnName = "review_id")
-	private List<ReviewUserEntity> reviewUserEntityList = new ArrayList<ReviewUserEntity>();
+//	@OneToMany
+//	@JoinColumn(name = "review_id", referencedColumnName = "review_id")
+//	private List<ReviewUserEntity> reviewUserEntityList = new ArrayList<ReviewUserEntity>();
 	
 	@Transient
 	private Integer likeCount;
@@ -76,15 +84,16 @@ public class ReviewEntity implements Serializable {
 	@Transient
 	private String nickname;
 	
-	private ReviewEntity(String content, Long userId, EmotionEntity emotionEntity, Long fontId, LocalDateTime createAt) {
+	private ReviewEntity(String content, Long userId, EmotionEntity emotionEntity, FontEntity fontEntity, WallpaperEntity wallpaperEntity, LocalDateTime createAt) {
 		this.content = content;
 		this.userId = userId;
 		this.emotionEntity = emotionEntity;
-		this.fontId = fontId;
+		this.fontEntity = fontEntity;
+		this.wallpaperEntity = wallpaperEntity;
 		this.createdAt = createAt;
 	}
 	
-	public static ReviewEntity of(String content, Long userId, EmotionEntity emotionEntity, Long fontId, LocalDateTime createdAt) {
-		return new ReviewEntity(content, userId, emotionEntity, fontId, createdAt);
+	public static ReviewEntity of(String content, Long userId, EmotionEntity emotionEntity, FontEntity fontEntity, WallpaperEntity wallpaperEntity, LocalDateTime createdAt) {
+		return new ReviewEntity(content, userId, emotionEntity, fontEntity, wallpaperEntity, createdAt);
 	}
 }

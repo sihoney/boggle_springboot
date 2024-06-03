@@ -1,5 +1,7 @@
-let REQUEST_INFO
+let REVIEW_MAP = {};
+let REVIEW_ID
 let NICKNAME
+let MODE
 
 // 화면 로드되기 전, 감정태그 출력 
 $("document").ready(function(){
@@ -17,15 +19,64 @@ $("document").ready(function(){
 	btnList.each(function(index, btn) {
 		btn.onclick = clickStyleBtn					
 	})
+	
+	// 폰트 버튼
+	let btnFontList = $(".btn_font");
+	btnFontList.each(function(index, btn) {
+		btn.onclick = clickFontBtn
+	})
+	
+	checkMode()
 })
+
+// 기록인지 수정인지 확인
+function checkMode() {
+	
+	var currentURL = window.location.href;// 현재 페이지 URL을 가져옵니다.
+	var queryString = currentURL.split('?')[1];// URL에서 쿼리 문자열(물음표 이후의 부분)을 추출합니다.
+	
+	// 쿼리 문자열이 존재하는지 확인합니다.
+	if (queryString) {
+	    
+		console.log(queryString)
+
+	    var params = new URLSearchParams(queryString);// 쿼리 문자열이 존재하면, 여기에서 쿼리 매개변수를 추출할 수 있습니다.
+
+		REVIEW_ID = params.get("reviewId")
+		REVIEW_MAP.reviewId = REVIEW_ID  
+
+	    // 특정 매개변수의 유무를 확인합니다. 예를 들어, "paramName"이라는 매개변수가 있는지 확인하려면:
+	    if (params.has("reviewId")) {
+	        MODE = "수정하기"
+
+			setProgressBar(1)
+			setProgressBar(2)
+			setProgressBar(3)
+			setProgressBar(4)
+			
+			// 수정, 삭제 버튼에 이벤트 핸들러 부착  
+			clickBook();
+			
+	    } else if(params.has("isbn")){
+	        MODE = "기록하기"
+			setProgressBar(1)
+			
+			// 수정, 삭제 버튼에 이벤트 핸들러 부착  
+			clickBook();
+	    }
+	} else {
+	    MODE = "기록하기"
+	}
+
+}
 
 function clickEmotionBtn(){
 
 	/* 스타일 옵션 출력 (초기화, 렌더)*/
 	//$(".btn-group").children().remove()
 	
-	if(REQUEST_INFO !== undefined) {
-		REQUEST_INFO.emotionId = this.id
+	if(REVIEW_MAP !== undefined) {
+		REVIEW_MAP.emotionId = this.id
 	}
 	
 	//setStyleBtn(emoNo)			
@@ -44,6 +95,29 @@ function clickStyleBtn(){
 
 	var $this = $(this)
 	var wallpaperId = $this.data("wallpaperid")
+	var wallpaperUrl = $this.css("background-image")
+		
+	//$("#review_box").css("background-color", backgroundColor)
+	$("#review_box").css("background-image", wallpaperUrl)
+	$("#review_box").css("background-size", "cover")
+	
+	if(REVIEW_MAP !== undefined) {
+		//REVIEW_MAP.wallpaperName = wallpaperName
+		REVIEW_MAP.wallpaperId = wallpaperId
+	}	
+	
+	// 진행 바 
+	if(REVIEW_MAP.fontId) {
+		setProgressBar(3)
+	}	
+	/*	
+	// 진행 바 
+	setProgressBar(3)*/
+	
+/*	if(REVIEW_MAP !== undefined) {
+		//REVIEW_MAP.wallpaperName = wallpaperName
+		REVIEW_MAP.wallpaperId = wallpaperId
+	}	
 	
 	// 텍스트아리아 스타일 변경
 	if(wallpaperId === undefined) {
@@ -52,9 +126,9 @@ function clickStyleBtn(){
 		
 		$("#review_textarea").css("font-family", fontName)
 		
-		if(REQUEST_INFO !== undefined) {
-			//REQUEST_INFO.fontName = fontName
-			REQUEST_INFO.fontId = fontId
+		if(REVIEW_MAP !== undefined) {
+			//REVIEW_MAP.fontName = fontName
+			REVIEW_MAP.fontId = fontId
 		}
 	} else {
 		var wallpaperUrl = $this.css("background-image")
@@ -63,14 +137,36 @@ function clickStyleBtn(){
 		$("#review_box").css("background-image", wallpaperUrl)
 		$("#review_box").css("background-size", "cover")
 		
-		if(REQUEST_INFO !== undefined) {
-			//REQUEST_INFO.wallpaperName = wallpaperName
-			REQUEST_INFO.wallpaperId = wallpaperId
+		if(REVIEW_MAP !== undefined) {
+			//REVIEW_MAP.wallpaperName = wallpaperName
+			REVIEW_MAP.wallpaperId = wallpaperId
 		}
+	}*/
+}
+
+function clickFontBtn(e){
+	e.preventDefault();
+	
+	var $this = $(this)
+	var fontId = $this.data("fontid")
+	var fontName = $this.text();
+	
+	// 텍스트아리아 스타일 변경
+	$("#review_textarea").css("font-family", fontName)
+	
+	// 전송 데이터 맵에 정보 넣기
+	if(REVIEW_MAP !== undefined) {
+		REVIEW_MAP.fontId = fontId
 	}
 	
 	// 진행 바 
-	setProgressBar(3)
+	if(REVIEW_MAP.wallpaperId) {
+		setProgressBar(3)
+	}	
+	
+	/*	
+	// 진행 바 
+	setProgressBar(3)*/	
 }
 
 /* textarea 자동높이조절 */
@@ -118,45 +214,33 @@ function setProgressBar(stageNum){
 }
 
 /* 저장하기 & 수정하기 */
-$("#btn_admit").on("click", function(){
+$("#btn_admit").on("click", async function(){
 
  	let reviewContent = $("#review_textarea").val()
-	if(reviewContent !== "" 
-		|| reviewContent !== null 
-		|| reviewContent !== undefined
-		) {
-		REQUEST_INFO.reviewContent = $("#review_textarea").val()
-	}
 	
-	if(isReadyToPost() === false) {
+	if(reviewContent === "" || isReadyToPost() === false) {
 		alert("입력하지 않은 부분이 있습니다")
 	}
 	else {
-		let mode = $(this).text()
+		REVIEW_MAP.reviewContent = $("#review_textarea").val()
 		
-		postReview(mode, REQUEST_INFO).then(data => {
-			/*
-			if(mode == "수정하기") {
-				nickname = data.redirect
-				reviewNo = reviewNoQuery
-				
-				$(".modal_question>p").text("수정되었습니다. 플레이리스트에 추가하시겠습니까?")
-				
-			} else { // 저장하기
-				nickname = data.redirect
-				reviewNo = data.reviewNo // 저장한 서평 넘버
-			}
-			*/
-			REQUEST_INFO.reviewId = data
+		let data = await postReview(REVIEW_MAP)
 			
-			// 플리에 저장할거냐고 질문 모달 
-			$(".modal_question").removeClass("unstaged")
-			$(".modal_question").addClass("opaque")	
-					
-		}).catch(error => {
-			console.log(error)
-		})
+		console.log(data)
+		
+		REVIEW_MAP.reviewId = data	
+		
+		if(MODE == "수정하기") {
+			$(".modal_question>p").text("수정되었습니다. 플레이리스트에 추가하시겠습니까?")
+			
+		}
+
+		// 플리에 저장할거냐고 질문 모달 
+		$(".modal_question").removeClass("unstaged")
+		$(".modal_question").addClass("opaque")
 	}
+	
+	
 })
 
 /* 작성 취소 */
@@ -185,19 +269,29 @@ function isReadyToPost(){
 	return result
 }
 
-async function postReview(mode, map) {
+/* 서평 저장 */
+async function postReview(map) {
 	
 	try {
-		if(mode === "수정하기") {
+		let method;
+		
+		if(MODE === "수정하기") {
 			console.log("수정하기")
-			var url = "/review/modifyReview"	
+			
+			var url = "/reviews"
+			method = "PUT"	
 		} else {
 			console.log("저장하기")
-			var url = "/registerReview"	
+			
+			//var url = "/registerReview"	
+			var url = "/reviews"
+			method = "POST"
 		}	
 		
+		console.log(map)
+		
 		let response = await fetch(url, {
-			method: 'POST',
+			method: method,
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -205,7 +299,7 @@ async function postReview(mode, map) {
 		})
 		
 		return response.json()
-			
+		
 	} catch (error) {
 		console.log("Failed to fetch: " + error)
 	}	
@@ -224,6 +318,8 @@ $(".mqBtn").on("click", function(){
 	
 	if(answer == "yes") {
 		getPlaylistByUserId().then(data => {
+			
+			console.log(data)
 			
 			renderMyPlaylist(data)
 			
@@ -251,7 +347,7 @@ async function clickPlaylistModal(){
 	//let playlistId = $(this).data("playlistId")
 	//console.log(playlistId)
 	
-	postReviewPlaylist(playlistId, REQUEST_INFO.reviewId).then(data => {
+	postReviewPlaylist(playlistId, REVIEW_MAP.reviewId).then(data => {
 		console.log("플리에 저장했습니다. 결과: " + data)
 		
 		// 페이드 효과 (모달 닫기)

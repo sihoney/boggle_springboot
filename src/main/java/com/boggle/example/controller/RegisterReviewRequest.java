@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class RegisterReviewRequest {
-
+	
 	@JsonProperty("cover")
 	private String coverUrl;
 	
@@ -36,6 +36,10 @@ public class RegisterReviewRequest {
 	
 	@JsonProperty("reviewContent")
 	private String content;
+	
+	private Long wallpaperId;
+	
+	private Long reviewId;
 	
 //	private RegisterReviewRequest (String coverUrl, String author, String bookName, Long isbn, String bookUrl, String genreName, Long genreId, 
 //			Long emotionId, String fontName, String content) {

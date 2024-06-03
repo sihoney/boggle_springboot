@@ -2,6 +2,7 @@ package com.boggle.example.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,28 +48,43 @@ public class ReviewService {
 	ReviewPlaylistRepository reviewPlaylistRepository;
 	
 	@Transactional(readOnly = true)
-	public WriteFormResponse writeForm() {
+	public WriteFormResponse writeForm(Long isbn, Long reviewId) {
+		
 		//감정과 font, wallpaper Entity
 		List<EmotionEntity> emotionEntityList = emotionRepository.findAll();
 		List<FontEntity> fontEntityList = fontRepository.findAll();
 		List<WallpaperEntity> wallpaperEntityList = wallpaperRepository.findAll();
 		
-		return WriteFormResponse.of(emotionEntityList, fontEntityList, wallpaperEntityList);
+		BookEntity bookEntity = null;
+		ReviewEntity reviewEntity = null;
+		
+		if(!Objects.isNull(reviewId)) { // 책 + 감정 + 스타일 + 리뷰 정보
+			reviewEntity = reviewRepository.findByReviewId(reviewId);
+		}
+		
+		else if(!Objects.isNull(isbn)) { // 책 정보
+			bookEntity = bookRepository.findByIsbn(isbn);
+		}
+		
+		return WriteFormResponse.of(emotionEntityList, fontEntityList, wallpaperEntityList, bookEntity, reviewEntity);
 	}
 
 	@Transactional
 	public Long registerReview(RegisterReviewRequest reviewRequest, Long userId) {
-		
-		BookEntity existingBook = bookRepository.findByIsbn(reviewRequest.getIsbn());
 			
+//		reviewEntity 생성
 		ReviewEntity reviewEntity = ReviewEntity.of(
 			reviewRequest.getContent(), 
 			userId, 
 			EmotionEntity.of(reviewRequest.getEmotionId()),
-			reviewRequest.getFontId(),
+			FontEntity.of(reviewRequest.getFontId()),
+			WallpaperEntity.of(reviewRequest.getWallpaperId()),
 			LocalDateTime.now());
 		
-		if(existingBook == null) {
+//		bookEntity 등록하기
+//		bookEntity 존재 유무 체크
+		BookEntity existingBook = bookRepository.findByIsbn(reviewRequest.getIsbn());
+		if(Objects.isNull(existingBook)) {
 			GenreEntity genreEntity = genreRepository.save(GenreEntity.of(
 					reviewRequest.getGenreName(), 
 					reviewRequest.getGenreId()));
@@ -84,6 +100,7 @@ public class ReviewService {
 			reviewEntity.setBookEntity(existingBook);
 		}
 
+//		reviewEntity 저장
 		ReviewEntity savedReviewEntity = reviewRepository.save(reviewEntity);
 		
 		return savedReviewEntity.getReviewId();
@@ -95,7 +112,57 @@ public class ReviewService {
 	}
 	
 	@Transactional
-	public ReviewPlaylistEntity addReviewToPlaylist(ReviewPlaylistEntity reviewPlayEntity) {
-		return reviewPlaylistRepository.save(reviewPlayEntity);
+	public ReviewPlaylistEntity addReviewToPlaylist(Long reviewId, Long playlistId) {
+		return reviewPlaylistRepository.save(ReviewPlaylistEntity.of(reviewRepository.findById(reviewId).get(), playlistRepository.findById(playlistId).get()));
+	}
+	
+	@Transactional
+	public ReviewEntity updateReview(RegisterReviewRequest registerReview) {
+		
+		ReviewEntity existingReview = reviewRepository.findByReviewId(registerReview.getReviewId());
+		
+		if(existingReview != null) {
+			existingReview.setModifiedAt(LocalDateTime.now());
+			
+//			서평 글 수정한 경우
+			if(registerReview.getContent() != null) {
+				existingReview.setContent(registerReview.getContent());
+			}
+			
+//			책 선택 수정한 경우
+			if(registerReview.getIsbn() != null) {
+				GenreEntity genreEntity = genreRepository.save(GenreEntity.of(
+						registerReview.getGenreName(), 
+						registerReview.getGenreId()));
+				
+				existingReview.setBookEntity(BookEntity.of(
+						registerReview.getIsbn(), 
+						registerReview.getBookName(), 
+						registerReview.getAuthor(), 
+						genreEntity.getGenreId(), 
+						registerReview.getBookUrl(), 
+						registerReview.getCoverUrl()
+						));
+			}
+			
+//			감정 수정한 경우
+			if(registerReview.getEmotionId() != null) {
+				existingReview.setEmotionEntity(EmotionEntity.of(registerReview.getEmotionId()));
+			}
+			
+//			폰트 수정한 경우
+			if(registerReview.getFontId() != null) {
+				existingReview.setFontEntity(FontEntity.of(registerReview.getFontId()));
+			}
+			
+//			배경화면 수정한 경우
+			if(registerReview.getWallpaperId() != null) {
+				existingReview.setWallpaperEntity(WallpaperEntity.of(registerReview.getWallpaperId()));
+			}
+		
+			return reviewRepository.save(existingReview);
+		}
+		
+		return null;
 	}
 }
