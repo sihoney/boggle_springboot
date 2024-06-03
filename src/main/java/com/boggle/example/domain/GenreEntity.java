@@ -26,12 +26,24 @@ public class GenreEntity {
 	@Column(name = "genre_name")
 	private String genreName;
 	
+//	private Long totalCount;
+	
 	private GenreEntity(String name, Long genreId) {
 		this.genreName = name;
 		this.genreId = genreId;
 	}
 	
+//	private GenreEntity(String name, Long genreId, Long totalCount) {
+//		this.genreName = name;
+//		this.genreId = genreId;
+//		this.totalCount = totalCount;
+//	}
+	
 	public static GenreEntity of(String name, Long genreId) {
 		return new GenreEntity(name, genreId);
 	}
+	
+//	public static GenreEntity of(String name, Long genreId, Long totalCount) {
+//		return new GenreEntity(name, genreId, totalCount);
+//	}
 }
