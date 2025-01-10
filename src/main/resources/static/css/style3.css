@@ -1,0 +1,379 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'MaruBuri';
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Nanum+Myeongjo&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Nanum+Brush+Script&family=Nanum+Myeongjo&display=swap");
+
+@media (max-width: 495px) {
+	.mobile_delete {
+		display: none;
+	}	
+	.reviewLink {
+		width: 90%;
+	}
+	.review {
+		font-size: 20px;
+		line-height: 2rem;
+	}
+	.sidebar {
+		width: 100%;
+	}
+	.heartBtn {
+		margin-bottom: 1rem;
+	}
+	.messageModal {
+		width: 90%;
+	}
+	.addReviewModal {
+		width: 90%;
+	}
+	.emotion-select-box {
+		width: 90%;
+	}
+	.addReviewModal .addPly-input {
+		width: 100%;
+	}
+}
+
+@media (max-height: 420px) {
+	.sidebar {
+		overflow: auto;
+	}
+	
+	.review {
+		font-size: 20px;
+    	line-height: 2rem;
+    	
+    	margin-top: 1rem;
+	}
+	
+	.slideBtnContainer button {
+		padding: 0.3rem;
+	}
+	
+	.upDown-container .upBtn {
+		top: 1rem;
+	}
+	
+	.upDown-container .downBtn {
+		bottom: 1rem;
+	}
+	
+	.review-modal-background {
+		overflow: auto;
+	}
+	
+	.addReviewModal .playlist-box {
+		height: 13rem;
+	}
+}
+
+/***************** header ****************/
+header {
+  position: fixed;
+  width: 100vw;
+  z-index: 1;
+}
+/****************** header > nav ******************/
+nav {
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* background: rgba(0, 0, 0, 0.5);
+box-shadow: 4px 4px 10px gray; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  z-index: 2;
+}
+
+.logo img{
+  width: 6rem;
+}
+/**************** header > button ****************/
+header .sidebarBtn {
+  margin-left: 1.5rem;
+  background: transparent;
+  border: none;
+  width: 2rem;
+  height: 2rem;
+}
+header .sidebarBtn .fa-bars {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #fff;
+}
+/******************* nav > links-container *******************/
+.links {
+  list-style: none;
+  display: flex;
+  line-height: 40px;
+}
+.links li {
+  font-size: 1.2rem;
+  padding: 0 0.3rem;
+  margin-right: 1rem;
+  transition: all 0.3s ease;
+  border-radius: 0.3rem;
+}
+.links li a {
+  color: white;
+  text-decoration: none;
+}
+.links li:hover {
+  font-weight: 700;
+}
+.links .login {
+  display: flex;
+  flex-direction: row;
+}
+.links .userImg {
+  width: 40px;
+  height: 40px;
+  margin-right: 0.5rem;
+}
+.links .userImg img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+
+
+/***************** 모달 > 새 플레이리스트 추가 ****************/
+.modal-background {
+  visibility: hidden;
+  z-index: -10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(224, 221, 209, 0.7);
+}
+.show-modal {
+  visibility: visible;
+  z-index: 10;
+}
+/*
+.playlistAddModal {
+  position: absolute;
+  background-color: #fff;
+  color: #707070;
+  width: 400px;
+  height: 150px;
+  border-radius: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1rem;
+}
+.playlistAddModal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  border-bottom: 2px solid #707070;
+}
+.playlistAddModal .modal-header .modal-closeBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.playlistAddModal .modal-header .modal-closeBtn i {
+  font-size: 2rem;
+}
+.playlistAddModal form input {
+  font-size: 1.3rem;
+  padding: 0.3rem;
+  width: 17rem;
+  margin-right: 1rem;
+}
+.playlistAddModal form button {
+  font-size: 1rem;
+  padding: 0.4rem 1rem;
+  background: #2699fb;
+  color: white;
+  border: 1px solid #2699fb;
+  border-radius: 0.5rem;
+}
+.playlistAddModal form button:hover {
+  color: #2699fb;
+  background: #707070;
+  border: 1px solid #707070;
+}
+*/
+/***************** 모달 > 서평 플레이리스트에 추가 ****************/
+
+.addReviewModal {
+  position: absolute;
+  background-color: #fff;
+  color: #707070;
+  width: 500px;
+  border-radius: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1.5rem;
+  z-index: 2;
+  transition: transform 0.3s;
+}
+
+.addReviewModal .input-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid black;
+}
+.addReviewModal .input-box p {
+	font-weight: bold;
+	font-size: 1.2rem;
+}
+
+.addReviewModal .input-box .modal-closeBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.addReviewModal .input-box .modal-closeBtn i {
+  font-size: 2rem;
+}
+.addReviewModal .playlist-box {
+  overflow-y: auto;
+  height: 15rem;
+}
+.addReviewModal .playlist-box ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+.addReviewModal .playlist-box ul .playlist-li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #cfcfcf;
+  padding: 1rem 0.5rem;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+.addReviewModal .playlist-box ul .playlist-li:hover {
+	background-color: #a5d6ff4d;
+}
+.addReviewModal .playlist-box ul .playlist-li.selected {
+	background-color: #2699fb;
+    color: #fff;
+}
+.addReviewModal .playlist-box ul .playlist-li button {
+  border: none;
+  background: transparent;
+}
+.addReviewModal .playlist-box ul .playlist-li button i {
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* 스크롤바 설정*/
+.playlist-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* 스크롤바 막대 설정*/
+.playlist-box::-webkit-scrollbar-thumb {
+  height: 17%;
+  background-color: #2699fb;
+  /* 스크롤바 둥글게 설정    */
+  border-radius: 10px;
+}
+
+/* 스크롤바 뒷 배경 설정*/
+.playlist-box::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0);
+}
+.addReviewModal .addPly-input {
+	font-size: 1rem;
+	margin: 0 auto;
+	width: 450px;
+	display: block;
+	padding: 0.7rem;
+	border: none;
+	background-color: #a5d6ff;
+}
+
+.addReviewModal.move {
+	transform: translate(-50%, -66%);
+}
+.emotion-select-box.show {
+	transform: translate(-50%, 61%);
+}
+
+.emotion-select-box {
+	width: 500px;
+	height: 170px;
+	background-color: white;
+	position: absolute;
+	padding: 1.5rem;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, 8%);
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	transition: transform 0.3s;
+	display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.emotion-select-box ul{
+	list-style: none;
+	overflow-x: scroll;
+	display: flex;
+	margin-bottom: 1rem;
+}
+.tag {
+	background-color: #a5d6ff;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    line-height: 4rem;
+    text-align: center;
+    font-size: .7rem;
+    letter-spacing: 2px;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.tag.selected {
+	background-color: darkblue;
+	color: white;
+}
+.tag:hover {
+	background-color: #2699fb;
+	color:#fff;
+}
+.emotion-select-box .plySubmitBtn {
+	height: 2.5rem;
+    background-color: #d6d6d6;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.emotion-select-box .plySubmitBtn:hover {
+	background-color: #939090;
+}
+/* 스크롤 바 없애기 */
+.emotion-select-box ul {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.emotion-select-box ul::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}

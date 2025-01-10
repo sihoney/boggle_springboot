@@ -1,0 +1,172 @@
+/************************* 
+container 
+**************************/
+.container {
+  /* width: 100vw;
+  height: 100vh; */
+  /* overflow: hidden; */
+  /* position: relative; */
+  /*min-width: 900px;*/
+}
+
+.slide-container {
+  position: relative;
+  /* width: 100%; */
+  height: 100vh;
+  background-color: cornflowerblue;
+  overflow: hidden;
+}
+
+.slide {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.5s ease-in-out;	
+}
+
+.card {
+  position: relative;
+  /***********************/
+  width: 100%;
+  height: 100vh;
+  /***********************/
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  /***********************/
+  /* background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  object-fit: cover; */
+  /***********************/
+  /* transition: all 0.5s ease-in-out; */
+}
+.dim {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  background-color: rgba(224, 221, 209, 0.7);
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+  top: 0%;
+  left: 0%;
+}
+.dim.unstaged {
+  z-index: -10;
+}
+.show-dim {
+  opacity: 1;
+}
+
+/****************** slide-container > card > video, content, writer, buttonContainer ****************/
+.video {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0.7;
+}
+.contentBox {
+	position: absolute;
+	width: 70%;
+}
+.link {
+	text-decoration: none;
+	width: 70%;
+	z-index: 1;
+}
+.content {
+  font-size: 25px;
+  line-height: 3rem;
+  color: #fff;
+  transition: all 0.3s;
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+  margin-top: 4rem; 
+}
+
+.link:hover .review{
+	background-color: rgb(247 244 244 / 30%);
+}
+
+.writer {
+  margin: 1.5rem 0 2rem 0;
+  color: white;
+  cursor: pointer;
+}
+.slideBtnContainer {
+	z-index: 1;
+}
+.slideBtnContainer button {
+  border: 1px solid #fff;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  margin: 0.5rem 1.5rem;
+  width: 12rem;
+  background: #dddddd39;
+  color: white;
+}
+.slideBtnContainer button i {
+  font-size: 1.2rem;
+  margin-left: 1rem;
+  color: white;
+}
+/************************************
+message modal
+*************************************/
+.messageModal {
+  width: 570px;
+  position: fixed;
+  background-color: #ffffffd1;
+
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 1;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+.messageModal p {
+  font-weight: bold;
+  color: #5889ff;
+  text-align: center;
+}
+.messageModal.opaque {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+.messageModal.unstaged {
+  top: -100px;
+  height: 0;
+}
+/************************* container > upDown btn ***********************/
+.upDown-container button {
+  z-index: 2;
+  background: transparent;
+  cursor: pointer;
+  position: absolute;
+  font-size: 3rem;
+  border: none;
+  color: #fff;
+  opacity: 0.6;
+}
+.upDown-container .upBtn {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 3rem;
+}
+.upDown-container .downBtn {
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 3rem;
+}
+.upDown-container .autoModeBtn {
+  bottom: 1rem;
+  right: 1rem;
+}

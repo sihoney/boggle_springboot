@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  springboot:
+    build:
+        context: . # 현재 디렉토리의 Dockerfile 사용
+        dockerfile: Dockerfile
+    container_name: springboot-container
+    ports:
+        - "18080:18080"
+    environment:
+        SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/boggle
+        SPRING_DATASOURCE_USERNAME: boggle_admin
+        SPRING_DATASOURCE_PASSWORD: 1Q2w3e4r!
+    depends_on:
+        - db # db 서비스 실행 후 backend 실행
+
+  db:  
+    image: mysql      
+    container_name: mysql-container
+    ports:
+      - "3306:3306"         
+    environment:
+      MYSQL_ROOT_PASSWORD: 1Q2w3e4r! 
+    volumes:
+      - db-data:/var/lib/mysql  
+      - ./init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./boggle_table.sql:/docker-entrypoint-initdb.d/02_boggle_table.sql
+      - ./boggle_insert.sql:/docker-entrypoint-initdb.d/03_boggle_insert.sql
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      && /scripts/wait-for-it.sh mysql-container:3306 --timeout=500 --strict -- java -jar app.jar
+    
+
+volumes:
+  db-data:                  # 볼륨 이름 선언
