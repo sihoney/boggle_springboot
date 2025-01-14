@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.boggle.example.controller.LoginResponse;
-import com.boggle.example.controller.UserIdResponse;
-import com.boggle.example.controller.UserRequest;
-import com.boggle.example.domain.UserEntity;
+import com.boggle.example.dto.LoginResponse;
+import com.boggle.example.dto.UserIdResponse;
+import com.boggle.example.dto.UserRequest;
+import com.boggle.example.entity.UserEntity;
 import com.boggle.example.repository.UserRepository;
 import com.boggle.example.util.FileUploadUtil;
 

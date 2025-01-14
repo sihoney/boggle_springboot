@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.boggle.example.domain.EmotionEntity;
+import com.boggle.example.entity.EmotionEntity;
 import com.boggle.example.service.EmotionService;
 
 @RestController

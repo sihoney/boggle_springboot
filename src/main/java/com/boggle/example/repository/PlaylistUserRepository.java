@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.boggle.example.domain.PlaylistUserEntity;
+import com.boggle.example.entity.PlaylistUserEntity;
 
 public interface PlaylistUserRepository extends JpaRepository<PlaylistUserEntity, Long>{
 

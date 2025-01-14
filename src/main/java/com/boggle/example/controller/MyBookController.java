@@ -25,8 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.boggle.example.domain.ReviewEntity;
 import com.boggle.example.dto.CustomUserDetails;
+import com.boggle.example.dto.LikeRequest;
+import com.boggle.example.dto.ReviewListResponse;
+import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.service.MyBookService;
 import com.boggle.example.util.EmotionEnum;
 import com.boggle.example.util.PagingUtil;

@@ -1,12 +1,12 @@
-package com.boggle.example.controller;
+package com.boggle.example.dto;
 
 import java.util.List;
 
-import com.boggle.example.domain.BookEntity;
-import com.boggle.example.domain.EmotionEntity;
-import com.boggle.example.domain.FontEntity;
-import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.WallpaperEntity;
+import com.boggle.example.entity.BookEntity;
+import com.boggle.example.entity.EmotionEntity;
+import com.boggle.example.entity.FontEntity;
+import com.boggle.example.entity.ReviewEntity;
+import com.boggle.example.entity.WallpaperEntity;
 
 import lombok.Getter;
 

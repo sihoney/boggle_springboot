@@ -10,7 +10,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.domain.EmotionEntity;
+import com.boggle.example.entity.EmotionEntity;
 import com.boggle.example.repository.EmotionRepository;
 
 @SpringBootTest

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.boggle.example.domain.MusicEntity;
+import com.boggle.example.entity.MusicEntity;
 
 public interface MusicRepository extends JpaRepository<MusicEntity, Long>{
 

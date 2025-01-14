@@ -11,8 +11,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.boggle.example.domain.EmotionEntity;
-import com.boggle.example.domain.ReviewEntity;
+import com.boggle.example.entity.EmotionEntity;
+import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.projection.EmotionProjection;
 import com.boggle.example.projection.ReviewCountProjection;
 import com.boggle.example.projection.ReviewProjection;

@@ -1,8 +1,8 @@
-package com.boggle.example.controller;
+package com.boggle.example.dto;
 
 import java.util.List;
 
-import com.boggle.example.domain.BookEntity;
+import com.boggle.example.entity.BookEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Getter;

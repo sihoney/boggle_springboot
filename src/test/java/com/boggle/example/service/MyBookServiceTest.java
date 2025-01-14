@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.domain.ReviewEntity;
+import com.boggle.example.entity.ReviewEntity;
 
 @SpringBootTest
 @Transactional

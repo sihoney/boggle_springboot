@@ -1,4 +1,4 @@
-package com.boggle.example.controller;
+package com.boggle.example.dto;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;

@@ -16,11 +16,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.controller.LoginResponse;
-import com.boggle.example.domain.EmotionEntity;
-import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.ReviewUserEntity;
-import com.boggle.example.domain.UserEntity;
+import com.boggle.example.dto.LoginResponse;
+import com.boggle.example.entity.EmotionEntity;
+import com.boggle.example.entity.ReviewEntity;
+import com.boggle.example.entity.ReviewUserEntity;
+import com.boggle.example.entity.UserEntity;
 import com.boggle.example.repository.EmotionRepository;
 import com.boggle.example.repository.ReviewPlaylistRepository;
 import com.boggle.example.repository.ReviewRepository;

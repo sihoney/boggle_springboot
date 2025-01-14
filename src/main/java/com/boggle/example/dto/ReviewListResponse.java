@@ -1,8 +1,8 @@
-package com.boggle.example.controller;
+package com.boggle.example.dto;
 
 import java.util.List;
 
-import com.boggle.example.domain.ReviewEntity;
+import com.boggle.example.entity.ReviewEntity;
 
 import lombok.Getter;
 import lombok.ToString;

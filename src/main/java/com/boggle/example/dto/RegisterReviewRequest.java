@@ -1,4 +1,4 @@
-package com.boggle.example.controller;
+package com.boggle.example.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

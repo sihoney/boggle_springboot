@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.boggle.example.domain.EmotionEntity;
+import com.boggle.example.entity.EmotionEntity;
 
 public interface EmotionRepository extends JpaRepository<EmotionEntity, Long> {
 

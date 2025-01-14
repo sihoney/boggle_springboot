@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.domain.UserEntity;
+import com.boggle.example.entity.UserEntity;
 
 @SpringBootTest
 @Transactional

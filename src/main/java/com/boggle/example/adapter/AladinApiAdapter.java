@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.boggle.example.controller.ApiResponse;
-import com.boggle.example.domain.BookEntity;
+import com.boggle.example.dto.ApiResponse;
+import com.boggle.example.entity.BookEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;

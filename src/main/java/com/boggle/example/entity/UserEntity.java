@@ -1,4 +1,4 @@
-package com.boggle.example.domain;
+package com.boggle.example.entity;
 
 import java.time.LocalDate;
 

@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.ReviewUserEntity;
+import com.boggle.example.entity.ReviewEntity;
+import com.boggle.example.entity.ReviewUserEntity;
 
 public interface ReviewUserRepository extends JpaRepository<ReviewUserEntity, Long>{
 

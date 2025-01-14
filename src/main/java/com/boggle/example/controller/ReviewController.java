@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boggle.example.adapter.AladinApiAdapter;
-import com.boggle.example.domain.PlaylistEntity;
-import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.ReviewPlaylistEntity;
+import com.boggle.example.dto.ApiResponse;
 import com.boggle.example.dto.CustomUserDetails;
+import com.boggle.example.dto.RegisterReviewRequest;
+import com.boggle.example.dto.SearchedBooksResponse;
+import com.boggle.example.entity.PlaylistEntity;
+import com.boggle.example.entity.ReviewEntity;
+import com.boggle.example.entity.ReviewPlaylistEntity;
 import com.boggle.example.service.ReviewService;
 import com.boggle.example.util.PagingUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;

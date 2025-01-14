@@ -21,10 +21,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.domain.PlaylistEntity;
-import com.boggle.example.domain.PlaylistUserEntity;
-import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.ReviewPlaylistEntity;
+import com.boggle.example.entity.PlaylistEntity;
+import com.boggle.example.entity.PlaylistUserEntity;
+import com.boggle.example.entity.ReviewEntity;
+import com.boggle.example.entity.ReviewPlaylistEntity;
 import com.boggle.example.repository.PlaylistRepository;
 import com.boggle.example.repository.PlaylistUserRepository;
 import com.boggle.example.repository.ReviewPlaylistRepository;

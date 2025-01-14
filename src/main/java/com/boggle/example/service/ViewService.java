@@ -3,7 +3,7 @@ package com.boggle.example.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.boggle.example.domain.ReviewEntity;
+import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.repository.ReviewRepository;
 import com.boggle.example.repository.UserRepository;
 

@@ -6,9 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.boggle.example.domain.PlaylistEntity;
-import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.ReviewPlaylistEntity;
+import com.boggle.example.entity.PlaylistEntity;
+import com.boggle.example.entity.ReviewEntity;
+import com.boggle.example.entity.ReviewPlaylistEntity;
 
 public interface ReviewPlaylistRepository extends JpaRepository<ReviewPlaylistEntity, Long>{
 	

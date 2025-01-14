@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.boggle.example.domain.UserEntity;
 import com.boggle.example.dto.CustomUserDetails;
+import com.boggle.example.entity.UserEntity;
 import com.boggle.example.repository.UserRepository;
 
 @Service

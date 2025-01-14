@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.boggle.example.domain.EmotionEntity;
+import com.boggle.example.entity.EmotionEntity;
 import com.boggle.example.repository.EmotionRepository;
 
 @Service

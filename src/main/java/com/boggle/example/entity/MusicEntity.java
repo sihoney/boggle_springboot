@@ -1,4 +1,4 @@
-package com.boggle.example.domain;
+package com.boggle.example.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

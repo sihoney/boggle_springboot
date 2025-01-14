@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.boggle.example.domain.PlaylistEntity;
-import com.boggle.example.domain.ReviewEntity;
 import com.boggle.example.dto.CustomUserDetails;
+import com.boggle.example.entity.PlaylistEntity;
+import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.service.MyBookService;
 import com.boggle.example.service.PlaylistService;
 import com.boggle.example.util.PagingUtil;

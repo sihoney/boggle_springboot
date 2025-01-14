@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.domain.ReviewPlaylistEntity;
+import com.boggle.example.entity.ReviewPlaylistEntity;
 
 @SpringBootTest
 @Transactional

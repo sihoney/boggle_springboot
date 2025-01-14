@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.domain.EmotionEntity;
+import com.boggle.example.entity.EmotionEntity;
 
 @SpringBootTest
 @Transactional

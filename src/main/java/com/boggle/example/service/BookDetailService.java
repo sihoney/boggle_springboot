@@ -11,10 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.boggle.example.domain.BookEntity;
-import com.boggle.example.domain.BookUserEntity;
-import com.boggle.example.domain.ReviewEntity;
-import com.boggle.example.domain.UserEntity;
+import com.boggle.example.entity.BookEntity;
+import com.boggle.example.entity.BookUserEntity;
+import com.boggle.example.entity.ReviewEntity;
+import com.boggle.example.entity.UserEntity;
 import com.boggle.example.repository.BookRepository;
 import com.boggle.example.repository.BookUserRepository;
 import com.boggle.example.repository.ReviewRepository;
