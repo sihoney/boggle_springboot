@@ -4,7 +4,7 @@
   <artifactId>boggle</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  
+ 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -60,7 +60,6 @@
  	<dependency>
 	    <groupId>javax.servlet</groupId>
 	    <artifactId>jstl</artifactId>
-	    <!-- <version>1.2</version> -->
 	</dependency>  
 	
 	<!-- JSP 렌더링을 위한 의존성 -->
@@ -69,7 +68,7 @@
 	    <artifactId>tomcat-embed-jasper</artifactId>
 	</dependency> 
 	
-	<!-- chapter08 데이터  -->
+	<!-- JPA  -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -78,16 +77,8 @@
     <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
-        <!-- <version>8.0.20</version> -->
     </dependency>
-    
-    <!-- 테스트 -->
-<!--     <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency> -->
-    
+        
 	<dependency>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-validation</artifactId>
@@ -107,8 +98,6 @@
 	<dependency>
 	    <groupId>org.springframework.security</groupId>
 	    <artifactId>spring-security-taglibs</artifactId>
-	    <!-- <version>5.3.13.RELEASE</version> -->
-	    <!-- <version>5.x.x.RELEASE</version> --> 
 	</dependency>	
 	
 	<!-- OAuth -->
@@ -130,7 +119,6 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <!-- <version>2.22.2</version> -->
             <configuration>
                 <skipTests>true</skipTests>
             </configuration>
