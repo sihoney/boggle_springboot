@@ -42,7 +42,7 @@
 							<h1>서평 기록하기</h1>
 							<p>'${auth.nickname}'님, 오늘은 어떤 책을 읽으셨나요?</p>
 							<p>
-								<a class="btn btn-primary btn-md" href="${pageContext.request.contextPath}/write" role="button">기록하기</a>
+								<a class="btn btn-primary btn-md" href="${pageContext.request.contextPath}/reviews/new" role="button">기록하기</a>
 							</p>
 						</div>
 						<!--기록하기 박스-->
@@ -80,7 +80,7 @@
 					 				</div>
 					 				<c:if test="${auth.nickname eq nickname}">
 						 				<div class="right">
-						 					<a href="${pageContext.request.contextPath}/write?reviewId=${reviewObj.reviewId}">수정</a> 
+						 					<a href="${pageContext.request.contextPath}/reviews/edit?reviewId=${reviewObj.reviewId}">수정</a> 
 						 					<a class="delete" data-reviewid="${reviewObj.reviewId }">삭제</a>
 						 				</div>
 						 			</c:if>

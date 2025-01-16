@@ -117,7 +117,7 @@
 							<c:forEach items="${ppList}" var="vo">
 								<div class="nail green">
 									<!-- 1~14까지 감정으로색깔 -->
-									<div class="nail-desc" onclick="location.href='${pageContext.request.contextPath}/playlist/folder?playlistNo=${vo.playlistId }&makerUserNo=${vo.userId }'">
+									<div class="nail-desc" onclick="location.href='${pageContext.request.contextPath}/playlists/${vo.playlistId }?makerUserNo=${vo.userId }'">
 										<p>${vo.playlistName }</p>
 									</div>
 									<div>

@@ -37,7 +37,7 @@ async function postNewPlaylist(playlistName, emoNo){
 			//emotionName: emoNo
 		}
 		
-		const response = await fetch("/api/playlist", {
+		const response = await fetch("/playlists", {
 			method: "POST",
 			headers: {
 				"Content-Type" : "application/json"

@@ -229,7 +229,7 @@ function renderMainTag(response) {
 // 플리 좋아요 & 취소
 async function toggleLikePlaylist(playlistId) {
     try {
-        const response = await fetch('/playlist_user', {
+        const response = await fetch(`/playlists/${playlistId}/likes`, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -256,7 +256,7 @@ async function toggleLikePlaylist(playlistId) {
 // 서평 좋아요 & 취소
 async function toggleLikeReview(reviewNo) {
     try {
-        const response = await fetch(`/review_user?reviewId=${reviewNo}`, {
+        const response = await fetch(`/reviews/${reviewNo}/likes`, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -272,7 +272,7 @@ async function getReviewList(page) {
     try {
 		page -= 1;
 	
-        const response = await fetch(`/playlists/${PLAYLIST_ID}?page=${page}`, {
+        const response = await fetch(`/playlists/${PLAYLIST_ID}/reviews?page=${page}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json', // JSON 응답 기대
@@ -294,7 +294,7 @@ async function getReviewList(page) {
 // 서평 삭제
 async function fetchDeleteReview(reviewNo, crtPage) {
     try {
-        const response = await fetch(`/review_playlist?reviewId=${reviewNo}&playlistId=${PLAYLIST_ID}&page=${crtPage}`, {
+        const response = await fetch(`/playlists/${PLAYLIST_ID}/reviews/${reviewNo}?page=${crtPage}`, {
             method: 'delete',
         });
 
@@ -361,14 +361,13 @@ async function getSearch(query, crtPage) {
 */
 async function addReviewToPly(reviews) {
  	try {
-	    const response = await fetch("/review_playlist", {
+	    const response = await fetch(`/playlistId/${PLAYLIST_ID}/reviews`, {
 	      	method: "POST",
 	      	headers: {
 	        	"Content-Type": "application/x-www-form-urlencoded",
 	      	},
 	      	body: new URLSearchParams({
-	        	checkedReview: reviews,
-	        	playlistId: PLAYLIST_ID,
+	        	checkedReview: reviews
 	      	}),
 	    });
 	

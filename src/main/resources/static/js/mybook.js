@@ -263,7 +263,7 @@ FETCH
 async function getReviewsAndPaging(page, sort, emotionName){
 	try {
 	
-		let path = `/api/reviews?userId=${USER_ID}&emotionName=${emotionName}&page=${page}&sort=${sort}`
+		let path = `/reviews?userId=${USER_ID}&emotionName=${emotionName}&page=${page}&sort=${sort}`
 		//let queryString = "page=" + page + "&sort=" + sort + "&emotionName=" + emotionName
 	
 		const response = await fetch(path)
@@ -278,16 +278,16 @@ async function getReviewsAndPaging(page, sort, emotionName){
 	}
 }
 	
-// 서평 좋아요
-async function postReviewUser(reviewid){
+// 서평 좋아요 & 좋아요 취소
+async function postReviewUser(reviewId){
 	try {
-		console.log(reviewid)
+		console.log(reviewId)
 		
 		let obj = {
-				reviewId : reviewid
+				reviewId : reviewId
 			}
 		
-		const response = await fetch("/reviewUser", {
+		const response = await fetch(`/reviews/${reviewId}/likes`, {
 				method: "POST",
 				headers : {
 					'Content-Type': 'application/json'
@@ -429,7 +429,7 @@ async function postReviewUser(reviewid){
 			
 			if(isSameUser === true) {
 				str += ' 		<div class="right"> ';
-				str += ' 			<a href="${pageContext.request.contextPath}/review/write?reviewNo='+mybookVo.reviewId+'">수정</a> <a class="delete" data-reviewid="'+mybookVo.reviewId+'">삭제</a> ';
+				str += ' 			<a href="${pageContext.request.contextPath}/reviews/edit?reviewId='+mybookVo.reviewId+'">수정</a> <a class="delete" data-reviewid="'+mybookVo.reviewId+'">삭제</a> ';
 				str += ' 		</div> ';
 			}
 			str += ' 	</div> ';

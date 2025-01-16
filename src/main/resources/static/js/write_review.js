@@ -333,7 +333,7 @@ $(".mqBtn").on("click", function(){
 		
 	} else {
 		//location.href = projectName + '/' + nickname
-		location.href = '/' + NICKNAME + '/mybook'
+		location.href = '/my-reviews';
 	}
 })
 
@@ -392,15 +392,11 @@ function renderMyPlaylist(list) {
 
 async function postReviewPlaylist(playlistNo, reviewNo) {
 	try {
-		let response = await fetch("/reviewPlaylist", {
+		let response = await fetch(`/playlists/${playlistNo}/reviews/${reviewNo}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				'playlistId': playlistNo,
-				'reviewId': reviewNo
-			})
+			}
 		})
 		return response.json()
 		

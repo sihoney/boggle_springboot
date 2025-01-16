@@ -44,7 +44,7 @@ async function clickAddBtn() {
 async function postLikeReview(reviewNo) {
 
 	try{
-		const response = await 	fetch(`/reviewUser`, {
+		const response = await 	fetch(`/reviews/${reviewNo}/likes`, {
 				method: "POST",
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify({
@@ -183,7 +183,7 @@ function showMsg(message){
 
 async function fetchSlideAndMusic(requestParam, id, page) {
 	try {
-		let url = `/api/review?page=${page}`;
+		let url = `/reviews-with-style?page=${page}&with-style=true`;
 		
 		if(requestParam != null & id != null) {
 			url += `&${requestParam}=${id}`

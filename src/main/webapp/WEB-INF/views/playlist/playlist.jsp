@@ -66,7 +66,7 @@
 						<c:set var="no" value="${status.index %3 }" />
 
 						<div class="clearfix columns_${no }">
-							<div class="text-name" onclick="location.href='${pageContext.request.contextPath}/playlist/folder?playlistNo=${vo.playlistNo }&makerUserNo=${vo.userNo }&nickname=${vo.nickname }'">
+							<div class="text-name" onclick="location.href='${pageContext.request.contextPath}/playlists/${vo.playlistNo }?makerUserNo=${vo.userNo }&nickname=${vo.nickname }'">
 								<!-- 1~14까지 감정으로색깔 -->
 								<div onclick="location.href='${pageContext.request.contextPath}/main?playlistNo=${vo.playlistNo }&nickname=${vo.nickname }';"style="cursor:pointer;">
 									<p id="name">${vo.playlistName}</p>
