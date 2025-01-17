@@ -4,6 +4,7 @@
 /target/
 /src/main/resources/static/images 
 /src/main/resources/static/music
+/screenshots
 
 # Java project
 # Compiled class file
