@@ -2,10 +2,11 @@
 Boggle은 '보다, 글을'의 줄임말로, 서평 등록, 관리 및 공유할 수 있는 웹 사이트입니다. 
 
 ## 스크린샷
-![홈페이지](./screenshots/homepage.png)
-![개인 페이지](./screenshots/gameplay.gif)
-![서평 등록 페이지](./screenshots/gameplay.gif)
-![유저 취향 페이지](./screenshots/gameplay.gif)
+<img src="./screenshots/boggle-main.png" alt="홈페이지" width="500">
+<img src="./screenshots/user-page.png" alt="개인페이지" width="500">
+<img src="./screenshots/review-register.png" alt="서평등록페이지1" width="500">
+<img src="./screenshots/review-register-searchbook.png" alt="서평등록페이지2" width="500">
+<img src="./screenshots/user-taste.png" alt="유저취향페이지" height="500">
 
 ## 기술 스택
 - Java
