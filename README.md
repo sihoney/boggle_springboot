@@ -1,6 +1,12 @@
 # Boggle
 Boggle은 '보다, 글을'의 줄임말로, 서평 등록, 관리 및 공유할 수 있는 웹 사이트입니다. 
 
+## 스크린샷
+![홈페이지](./screenshots/homepage.png)
+![개인 페이지](./screenshots/gameplay.gif)
+![서평 등록 페이지](./screenshots/gameplay.gif)
+![유저 취향 페이지](./screenshots/gameplay.gif)
+
 ## 기술 스택
 - Java
 - Spring Boot
