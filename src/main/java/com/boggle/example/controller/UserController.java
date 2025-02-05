@@ -1,12 +1,28 @@
 package com.boggle.example.controller;
 
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.boggle.example.dto.UserRequest;
+import com.boggle.example.dto.user.UserForm;
+import com.boggle.example.dto.user.UserRequest;
+import com.boggle.example.entity.UserEntity;
+import com.boggle.example.entity.UserPrincipal;
 import com.boggle.example.service.UserService;
 
 
@@ -14,21 +30,35 @@ import com.boggle.example.service.UserService;
 //@RequestMapping("/user")
 public class UserController {
 	
-/*
- * 1. 로그인
- * 2. 회원가입
- * 3. 유저정보 수정	
- */
-	
 	@Autowired
 	private UserService userService;
 //	@Autowired
 //	private CustomUserDetailsService userDetailsService;
 //	@Autowired
-//	private ResourceLoader resourceLoader;
+//	private ResourceLoader resourceLoader;	
+	
+/*
+	페이지
+		GET		/users/login			로그인 페이지
+		GET		/users/register			회원가입 페이지
+		GET		/users/edit				수정 페이지
+		
+		POST	/users					등록
+		PUT		/users					수정
+		
+		GET		users/nickname/exists	닉네임 중복 확인 
+		GET		users/password/exists	비밀번호 중복 확인
+ */
+	
+/*
+	페이지
+		GET		/users/login			로그인 페이지
+		GET		/users/register			회원가입 페이지
+		GET		/users/edit				수정 페이지	
+ */
 	
 	/* 로그인 페이지 - spring security */ 
-	@RequestMapping("/user/loginForm")
+	@GetMapping("/users/login")
 	public String loginForm() {
 		System.out.println("UserController.loginForm()");
 		
@@ -36,182 +66,120 @@ public class UserController {
 	}
 	
 	/* 회원가입 페이지 */
-	@RequestMapping("/user/joinForm")
+	@GetMapping("/users/register")
 	public String joinForm() {
 		System.out.println("UserController.joinForm()");
 		
 		return "user/joinForm";
 	}
 	
-	/* 회원가입 */
-	@PostMapping(value="/join") 	
+	/* 수정 페이지 */
+	@GetMapping("/users/edit")
+	public String modifyUserPage(
+			HttpSession session,
+//			Model model,
+			@AuthenticationPrincipal UserPrincipal userDetails
+			) {
+		System.out.println("UserController.modifyUserPage()");
+		
+//	    model.addAttribute(userDetails);
+	    
+		return "user/user_modify";
+	}
+	
+/*
+	POST	/users					등록
+	PUT		/users					수정
+ */
+	
+	/* 등록 */
+	@PostMapping(value="/users") 	
 	public String join(
-			@ModelAttribute UserRequest userRequest
+			@RequestBody UserRequest userRequest
 			) {
 		System.out.println("UserController.join()");
-
+		
 		userService.join(userRequest);
 
 		return "user/loginForm";
 	}
 	
-	/* 회원가입-2 */
-//    @PostMapping("/join")
-//    public String registerUser(@ModelAttribute SignupForm form) {
-//    	
-//        userDetailsService.registerNewUser(form);
-//        
-//        return "redirect://WEB-INF/views/user/loginForm.jsp";  // 회원가입 후 로그인 페이지로 이동
-//    }
-	
-	/* 회원가입 페이지 - 닉네임 중복체크 */
-//	@RequestMapping(value="users/join/checkNickname")
-//    @ResponseBody
-//    public ResponseEntity<Integer> nicknameCheck(
-//    		@RequestParam("nickname") String nickname
-//    		){
-//    	System.out.println("사용하고싶은 닉네임 : "+nickname);
-//        
-//    	boolean result = userService.checkNickname(nickname);
-//        
-//        return new ResponseEntity(result, HttpStatus.OK);
-//    }	
-	
-	/* 로그아웃 */
-//	@RequestMapping("/user/logout")
-//	public String logout(HttpSession session) {
-//		System.out.println("UserController.logout()");
-//		
-//		// 세션 정보 삭제
-//		session.removeAttribute("authUser");
-//		
-//		return "/WEB-INF/views/user/loginForm.jsp";
-//	}
-	
-	/* 수정 페이지 */
-//	@RequestMapping("/user/modify")
-//	public String modifyUserPage(
-//			HttpSession session,
-//			Model model,
-//			@AuthenticationPrincipal CustomUserDetails userDetails
-//			) {
-//		System.out.println("UserController.modifyUser()");
-//		
-//	    model.addAttribute(userDetails);
-//	    
-//		return "/WEB-INF/views/user/user_modify.jsp";
-//	}
-//	
-//	private void updateAuthentication(CustomUserDetails updatedUserDetails, Authentication authentication) {
-//	    Authentication updatedAuthentication = new UsernamePasswordAuthenticationToken(
-//	        updatedUserDetails,
-//	        authentication.getCredentials(),
-//	        updatedUserDetails.getAuthorities()
-//	    );
-//
-//	    SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
-//	}
-//
-//	
-//	/* 수정 */
-//	@ResponseBody
-//	@RequestMapping("/modifyUser")
-//	public String modifyUser(
-////			@Valid @ModelAttribute("userForm") UserForm userForm, BindingResult bindingResult,
-//			@RequestParam(name = "image-file", required = false) MultipartFile file,
-//			@RequestParam(name = "nickname", required = false) String nickname,
-//			@RequestParam(name = "password", required = false) String password, 
-//			HttpSession session,
-//			@AuthenticationPrincipal CustomUserDetails userDetails
-//			,RedirectAttributes redirectAttributes // RedirectAttributes를 매개변수로 추가
-//			) {
-//		
-////	    if (bindingResult.hasErrors()) {
-////	    	return "failure";
-//////	        return "userForm"; // 오류가 있을 경우 다시 폼으로 이동
-////	    }
-//
-//		try {
-//			// 사용자 정보 업데이트
-//			UserEntity updatedUserEntity = userService.modifyUser(userDetails.getUserId(), file, nickname, password);
-//			
-//	        if (updatedUserEntity == null) {
-//	            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update user information.");
-//	            return "redirect:/failure";
-//	        }		
-//	        
-//	        // 새 사용자 정보로 UserDetails 갱신
-//	        CustomUserDetails updatedUserDetails = new CustomUserDetails(
-//	                updatedUserEntity.getEmail(), 
-//	                updatedUserEntity.getPassword(), 
-//	                updatedUserEntity.getUserId(), 
-//	                updatedUserEntity.getUserName(),
-//	                updatedUserEntity.getNickname(),
-//	                updatedUserEntity.getUserProfile(), 
-//	                userDetails.getAuthorities()
-//	        );	
-//	        
-////			SecurityContext context = SecurityContextHolder.getContext();
-////			Authentication authentication = context.getAuthentication();
-//	        
-////			updateAuthentication(updatedUserDetails, authentication);		
-//			Authentication updatedAuthentication = new UsernamePasswordAuthenticationToken(
-//			    updatedUserDetails, // 새로운 UserDetails
-//			    null, // 사용자의 인증 확인을 위해 비밀번호가 전달되는 자리
-//			    updatedUserDetails.getAuthorities() // 새로운 권한 정보
-//			);
-//			SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
-//	        
-//			return "success";
-////	        redirectAttributes.addFlashAttribute("successMessage", "User information updated successfully.");
-////	        return "redirect:/WEB-INF/views/success";
-//			
-//		} catch (Exception e) {
-//			return "failure";
-////	        // 예외 발생 시 로그 및 리다이렉트 처리
-////	        redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while updating user information.");
-////	        return "redirect:/WEB-INF/views/failure";			
-//		}
-//	
-//		/*
-//	    // userService.modifyUser 메서드의 결과에 따라 리다이렉트할 URL 선택
-//	    if (!Objects.isNull(updatedUserEntity)) {
-//	        // 성공한 경우
-//	    	return "success";
-//	    } else {
-//	        // 실패한 경우
+	/* 수정 */
+	@ResponseBody
+	@PutMapping("/users")
+	public ResponseEntity<String> modifyUser(
+//			@Valid @ModelAttribute("userForm") UserForm userForm, BindingResult bindingResult,
+			@ModelAttribute UserForm userForm,
+			@AuthenticationPrincipal UserPrincipal userDetails,
+			RedirectAttributes redirectAttributes, // RedirectAttributes를 매개변수로 추가
+			HttpServletRequest request
+			) {
+		System.out.println("UserController.modifyUser()");
+		System.out.println(userForm);
+		
+//	    if (bindingResult.hasErrors()) {
 //	    	return "failure";
-//	    }
-//	    */	
-//	}
-//	
-//	/* 수정 페이지 - 닉네임 중복 체크 */
-//	@ResponseBody
-//	@PostMapping("/check-duplicate")
-//	public ResponseEntity<Boolean> checkDuplicate(
-//			@RequestBody UserRequest nicknameToCheck
-//		) {
-//		
-//		return ResponseEntity.ok(userService.checkNickname(nicknameToCheck.getNickname()));
-//	}
-//	
-//	/* 수정 페이지 - 비밀번호 체크 */
-//	@ResponseBody
-//	@PostMapping("/check-password")
-//	public ResponseEntity<Boolean> checkPassword(
-//			@RequestBody UserRequest passwordToCheck,
-//			HttpSession session,
-//			@AuthenticationPrincipal CustomUserDetails userDetails
-//		) {
-////		System.out.println(passwordToCheck);
-//		
-////		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-////	    if (session == null 
-////			  || session.getAttribute("authUser") == null 
-////			  || session.getAttribute("authUser").equals("")) {
-////		   System.out.println("세션만료 혹은 잘못된 접근");
-////	    }
-//	    
-//	    return ResponseEntity.ok(userService.checkPassword(userDetails.getNickname(), passwordToCheck.getPassword()));
-//	}	
+////	        return "userForm"; // 오류가 있을 경우 다시 폼으로 이동
+//	    }		
+		
+		try {
+			// 1. 사용자 정보 업데이트
+			UserEntity updatedUserEntity = userService.modifyUser(
+				userDetails.getUserId(), 
+				userForm					
+			);		
+	        
+	        // 2. authentication principal 갱신
+	        userService.updateUserInfo(
+        		UserPrincipal.create(updatedUserEntity), 
+        		request
+        	);        
+	        
+			return ResponseEntity.ok().build();
+		} catch (EntityNotFoundException e) {
+	        // 4. 사용자를 찾을 수 없는 경우
+	        return ResponseEntity.notFound().build();
+	    } catch (ValidationException e) {
+	        // 5. 유효성 검증 실패 
+	        return ResponseEntity.badRequest().build();
+	    } catch (Exception e) {
+	        // 6. 기타 서버 에러
+	        return ResponseEntity.internalServerError().build();
+	    }	
+	}
+	
+/*
+	GET		users/nickname/exists	닉네임 중복 확인 
+	GET		users/password/exists	비밀번호 중복 확인
+ */
+	
+	/* 닉네임 중복체크 - 회원가입 페이지 */
+	@GetMapping(value="users/nickname/exists")
+    @ResponseBody
+    public ResponseEntity<Integer> nicknameCheck(
+    		@RequestParam("nickname") String nickname,
+			@AuthenticationPrincipal UserPrincipal userPrincipal
+    		){
+    	System.out.println("닉네임 중복 확인 : "+nickname);
+        
+    	boolean result = userService.checkNickname(nickname, userPrincipal.getNickname());
+        
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+	
+	/* 비밀번호 체크 */
+	@ResponseBody
+	@GetMapping("/users/password/exists")
+	public ResponseEntity<Boolean> checkPassword(
+			@RequestBody UserRequest passwordToCheck,
+			HttpSession session,
+			@AuthenticationPrincipal UserPrincipal userDetails
+		) {
+//		System.out.println(passwordToCheck);
+	    
+	    return ResponseEntity.ok(userService.checkPassword(
+	    		userDetails.getNickname(), 
+	    		passwordToCheck.getPassword()
+	    		));
+	}
 }

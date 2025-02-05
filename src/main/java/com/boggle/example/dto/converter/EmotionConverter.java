@@ -1,4 +1,4 @@
-package com.boggle.example.domain.converter;
+package com.boggle.example.dto.converter;
 
 import java.util.Objects;
 

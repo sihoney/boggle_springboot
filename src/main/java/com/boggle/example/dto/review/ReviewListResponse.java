@@ -1,7 +1,8 @@
-package com.boggle.example.dto;
+package com.boggle.example.dto.review;
 
 import java.util.List;
 
+import com.boggle.example.dto.user.LoginResponse;
 import com.boggle.example.entity.ReviewEntity;
 
 import lombok.Getter;

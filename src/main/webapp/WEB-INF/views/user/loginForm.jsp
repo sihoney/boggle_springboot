@@ -7,14 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
 
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/source.css" type="text/css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/loginForm.css" type="text/css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/source.css" type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/loginForm.css" type="text/css">
     <link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css">     
     
-    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
 
 	<%-- <link href="<c:url value='/custom-login' />" rel="stylesheet" /> --%>
 </head>
@@ -51,9 +51,13 @@
 	                <div id="login_find">
 	                    <span>아이디찾기</span>
 	                    <span class="line-l-r">비밀번호 찾기</span>
-	                    <span><a href="${pageContext.request.contextPath}/user/joinForm">회원가입</a></span>
+	                    <span><a href="${pageContext.request.contextPath}/users/register">회원가입</a></span>
 	                </div>
-	                <button type="button" class="btn btn-primary btn-lg btn-block btn-naverlogin">네이버로 로그인</button>
+	                <a href="/oauth2/authorization/google">
+		                <button type="button" class="btn btn-primary btn-lg btn-block btn-naverlogin">
+		                	구글로 로그인
+		                </button>
+	                </a>
 	            </div>
 	       	</form>
 	       	

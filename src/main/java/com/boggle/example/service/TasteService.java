@@ -11,7 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.dto.UserDto;
+import com.boggle.example.dto.user.UserDto;
 import com.boggle.example.entity.BookEntity;
 import com.boggle.example.entity.PlaylistEntity;
 import com.boggle.example.entity.PlaylistUserEntity;

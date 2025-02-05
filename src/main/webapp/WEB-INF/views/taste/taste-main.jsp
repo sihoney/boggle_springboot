@@ -62,7 +62,7 @@
 								<div id="reviews-header">
 									<div class="left">
 										<p>
-											<a href="${pageContext.request.contextPath}/book/${vo.bookEntity.isbn}">${vo.bookEntity.bookName }</a>
+											<a href="${pageContext.request.contextPath}/books/${vo.bookEntity.isbn}">${vo.bookEntity.bookName }</a>
 										</p>
 									</div>
 									<!-- 작성자아이디와 세션아이디가 동일할 시에만 보이게 -->
@@ -176,7 +176,7 @@
 							</c:when>
 							<c:otherwise>
 								<c:forEach items="${bookList}" var="vo">
-									<a class="a" href="${pageContext.request.contextPath}/book/${vo.isbn}"> 
+									<a class="a" href="${pageContext.request.contextPath}/books/${vo.isbn}"> 
 										<img class="cover" src="${vo.coverUrl }" alt="image" />
 									</a>
 								</c:forEach>							

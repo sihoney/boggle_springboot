@@ -151,6 +151,9 @@
     color: #FFFFFF;
 }
 
+.warning {
+	display: none;
+}
 
 /* --------------footer------------- */
 #footer {

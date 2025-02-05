@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.boggle.example.dto.CustomUserDetails;
 import com.boggle.example.dto.PlaylistDTO;
+import com.boggle.example.dto.auth.CustomUserDetails;
 import com.boggle.example.entity.PlaylistEntity;
 import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.entity.ReviewPlaylistEntity;

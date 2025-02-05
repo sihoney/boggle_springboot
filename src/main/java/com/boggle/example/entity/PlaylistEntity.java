@@ -61,7 +61,7 @@ public class PlaylistEntity {
 	private PlaylistEntity (String playlistName, Long userId, Long emotionId) {
 		this.playlistName = playlistName;
 		this.userId = userId;
-		this.emotionId = emotionId;
+//		this.emotionId = emotionId;
 	}
 	
 	public static PlaylistEntity of(String playlistName, Long userId) {

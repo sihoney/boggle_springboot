@@ -1,6 +1,5 @@
 package com.boggle.example.controller;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,17 +28,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boggle.example.adapter.AladinApiAdapter;
 import com.boggle.example.dto.ApiResponse;
-import com.boggle.example.dto.CustomUserDetails;
 import com.boggle.example.dto.LikeRequest;
-import com.boggle.example.dto.RegisterReviewRequest;
-import com.boggle.example.dto.ReviewListResponse;
 import com.boggle.example.dto.SearchedBooksResponse;
-import com.boggle.example.entity.PlaylistEntity;
+import com.boggle.example.dto.review.RegisterReviewRequest;
+import com.boggle.example.dto.review.ReviewListResponse;
+import com.boggle.example.dto.user.LoginResponse;
 import com.boggle.example.entity.ReviewEntity;
-import com.boggle.example.entity.ReviewPlaylistEntity;
+import com.boggle.example.entity.UserPrincipal;
+import com.boggle.example.service.BookDetailService;
 import com.boggle.example.service.MainService;
 import com.boggle.example.service.MyBookService;
 import com.boggle.example.service.ReviewService;
+import com.boggle.example.service.ViewService;
 import com.boggle.example.util.EmotionEnum;
 import com.boggle.example.util.PagingUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -55,30 +55,49 @@ public class ReviewController {
 	AladinApiAdapter aladinApiAdapter;
 	@Autowired
 	MainService mainService;
+	@Autowired
+	ViewService viewService;
+	@Autowired
+	BookDetailService bookDetailService;
 	
 	Integer TOTAL_EMOTION = 8;
 	final int SIZE = 5;
 	
 /*
- 	페이지 
- 	GET		/boggle							메인 페이지
-	GET		/my-reviews						유저 페이지
-	GET		/reviews/new					서평 등록 페이지	
-	GET		/reviews/edit					서평 수정 페이지
-	
-	GET		/searchbook						aladin-api 책 검색
-	
-	GET			/api/reviews				서평 목록 불러오기 - mybook 페이지
-	GET			/api/review					서평 목록 불러오기 - main 페이지
-	POST 		/reviews					게시물 작성 
-	PUT 		/reviews/{id}				게시물 수정 
-	DELETE 		/reviews/{id} 				게시물 삭제	
-	
-	POST		/reviews/{reviewId}/likes 
-	DELETE		/reviews/{reviewId}/likes
-	GET			/reviews/{reviewId}/likes/count		좋아요 개수 조회
-	GET			/reviews/{reviewId}/likes/me		현재 사용자의 좋아요 상태 확인
+	페이지 
+	 	GET			/boggle							메인 페이지
+		GET			/my-reviews						유저 페이지
+		GET			/reviews/new					서평 등록 페이지	
+		GET			/reviews/edit					서평 수정 페이지
+		GET			/reviews/{reviewId}				서평 이미지 페이지
+		
+	알라딘 API
+		GET			/searchbook						aladin-api 책 검색
+		
+	API
+		GET			/reviews-with-style				서평 목록 불러오기 - main 페이지
+		GET			/reviews						서평 목록 불러오기 - mybook 페이지
+		GET			/api/books/{isbn}				특정 책의 서평 목록 조회 - book detail 페이지
+		POST 		/reviews						게시물 작성 
+		PUT 		/reviews/{id}					게시물 수정 
+		DELETE 		/reviews/{id} 					게시물 삭제
+		
+	좋아요
+		POST		/reviews/{reviewId}/likes 
+		DELETE		/reviews/{reviewId}/likes
+		GET			/reviews/{reviewId}/likes/count	좋아요 개수 조회
+		GET			/reviews/{reviewId}/likes/me	현재 사용자의 좋아요 상태 확인
  */
+	
+
+/*
+ 	페이지 
+ 	GET			/boggle							메인 페이지
+	GET			/my-reviews						유저 페이지
+	GET			/reviews/new					서평 등록 페이지	
+	GET			/reviews/edit					서평 수정 페이지
+	GET			/reviews/{reviewId}				서평 이미지 페이지	
+ */	
 	
 	/* 메인 페이지 */
 	@RequestMapping("/boggle")
@@ -86,23 +105,24 @@ public class ReviewController {
 			@PageableDefault(page = 0, size = SIZE, sort = "createdAt", direction=Direction.DESC) Pageable pageable,
 			Model model,
 			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+//			@AuthenticationPrincipal OAuth2User userPrincipal
+			@AuthenticationPrincipal UserPrincipal userPrincipal
 			) {
 		System.out.println("MainController.main()");
+		System.out.println(userPrincipal);
 		
-		Long authUserId;
-		
-		if (userDetails != null) {
-		    // userDetails 객체가 null이 아닌 경우에만 getUserId() 메서드를 호출합니다.
-			authUserId = userDetails.getUserId();
-		} else {
+		Map<String, Object> mainMap;
+		if (Objects.isNull(userPrincipal)) {
 		    // userDetails 객체가 null인 경우에 대한 처리를 수행합니다.
 		    // 예: 로깅 또는 기본값 설정 등
-			authUserId = null;
+			mainMap = mainService.main(null, pageable);
+		} else {
+		    // userDetails 객체가 null이 아닌 경우에만 getUserId() 메서드를 호출합니다.
+			mainMap = mainService.main(
+				(Long) userPrincipal.getAttributes().get("userId"), 
+				pageable
+			);
 		}		
-		
-//		Long authUserId = userDetails.getUserId();
-		Map<String, Object> mainMap = mainService.main(authUserId, pageable);
 		
 //		model.addAttribute("reviewList", mainMap.get("reviewList"));
 //		model.addAttribute("pagination", mainMap.get("pagination"));
@@ -114,31 +134,37 @@ public class ReviewController {
 	
 	/* my-reviews 페이지 */
 //	@Secured("ROLE_ADMIN")
-	@RequestMapping("/my-reviews")
+	@RequestMapping("/my-reviews/{nickname}")
 	public String mybook (
-//			@PathVariable(value = "nickname", required=true) String nickname,
+			@PathVariable(value = "nickname", required=true) String nickname,
 			@PageableDefault(size = 8, page = 0, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, //, sort = "createdAt,desc"
 			Model model,
 			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
-		System.out.print("ReviewController.mybook()");
-//		System.out.println("nickname: " + nickname);
+		System.out.println("ReviewController.mybook()");		
+		System.out.println(nickname);
 		
-		System.out.println(userDetails.getNickname());
-		String nickname = userDetails.getNickname();
-		
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-		Page<ReviewEntity> pageObj = mybookService.getReviewsByCreatedAt(nickname, null, pageable, userDetails.getUserId());
-		Map<String, Integer> map = PagingUtil.pagination((int) pageObj.getTotalElements(), pageable.getPageSize(), pageable.getPageNumber() + 1);
+		Page<ReviewEntity> pageObj = mybookService.getReviewsByCreatedAt(
+				nickname, 
+				null, 
+				pageable, 
+				userDetails.getUserId()
+				);
+		Map<String, Integer> map = PagingUtil.pagination(
+				(int) pageObj.getTotalElements(), 
+				pageable.getPageSize(), 
+				pageable.getPageNumber() + 1
+				);
 		
 		model.addAttribute("nickname", nickname);
+		model.addAttribute("pageUser", mybookService.getUserProfile(nickname));
+		
 		model.addAttribute("emotionList", EmotionEnum.getList());
-		model.addAttribute("userProfile", mybookService.getUserProfile(nickname));
 		model.addAttribute("reviewList", pageObj.getContent());
-//		model.addAttribute("sort", pageObj.getPageable().getSort().toString());
 		model.addAttribute("startPage", map.get("startPage"));
 		model.addAttribute("endPage", map.get("endPage"));
+//		model.addAttribute("sort", pageObj.getPageable().getSort().toString());
 		
 		return "mybook/mybook_review";
 	}
@@ -150,7 +176,7 @@ public class ReviewController {
 			@RequestParam(value = "reviewId", required = false) Long reviewId,
 			HttpSession session,
 			Model model,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
 		System.out.println(">> ReviewWriteController.write()");
 	  
@@ -171,7 +197,7 @@ public class ReviewController {
 			@RequestParam(value = "reviewId", required = false) Long reviewId,
 			HttpSession session,
 			Model model,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
 		System.out.println(">> ReviewWriteController.write()");
 	  
@@ -185,8 +211,21 @@ public class ReviewController {
 		return "review_write/review_write";
 	}
 	
+	/* 서평 이미지 페이지 */
+	@RequestMapping("/reviews/{reviewId}")
+	public String getViewOfReview(
+			@PathVariable(value = "reviewId") Long reviewId,
+			Model model
+			) {
+		System.out.println("ViewController.viewer()");
+		
+		model.addAttribute("review", viewService.getReview(reviewId));
+		
+		return "viewer/viewer";
+	}
+	
 /*
-	GET	/searchbook		aladin-api 책 검색	
+	GET			/searchbook				aladin-api 책 검색	
  */
 	
 	@ResponseBody
@@ -206,6 +245,7 @@ public class ReviewController {
 /*
 	GET			/reviews-with-style		서평 목록 불러오기 - main 페이지
 	GET			/reviews				서평 목록 불러오기 - mybook 페이지
+	GET			/api/books/{isbn}		특정 책의 서평 목록 조회 - book detail 페이지
 	POST 		/reviews				게시물 작성 
 	PUT 		/reviews/{id}			게시물 수정 
 	DELETE 		/reviews/{id} 			게시물 삭제
@@ -218,7 +258,7 @@ public class ReviewController {
 			 @RequestParam(value="emotionId", required=false) Long emotionId,
 			 @PageableDefault(page = 0, size = SIZE) Pageable pageable,
 			 HttpSession session,
-			 @AuthenticationPrincipal CustomUserDetails userDetails
+			 @AuthenticationPrincipal UserPrincipal userDetails
 			 ) {
 		System.out.println("MainController.apiReview()");
 
@@ -245,7 +285,7 @@ public class ReviewController {
 		   @RequestParam(value = "emotionName", required=false) String emotionName, 
            @PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
 		   HttpSession session,
-           @AuthenticationPrincipal CustomUserDetails userDetails
+           @AuthenticationPrincipal UserPrincipal userDetails
            ){
 	   System.out.println("MyBookController.getReviews()");
 
@@ -299,6 +339,21 @@ public class ReviewController {
 				   (int) map.get("endPage"))
 			   );
    }	
+   
+	/* 특정 책의 서평 목록 조회  - book detail 페이지*/
+	@RequestMapping("/api/books/{isbn}")
+	public ResponseEntity<Map<String, Object>> bookDetailApi(
+			@PathVariable(value="isbn") Long isbn,
+			@PageableDefault(page = 0, size = SIZE) Pageable pageable,
+			HttpSession session
+			) {
+	
+		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
+		
+		Map<String, Object> map = bookDetailService.bookDetail(isbn, pageable, authUser.getUserId());
+		
+		return ResponseEntity.ok(map);
+	}
 	
 	/* 서평 등록 */
 	@ResponseBody
@@ -306,22 +361,13 @@ public class ReviewController {
 	public ResponseEntity<Long> addReview(
 			@RequestBody RegisterReviewRequest reviewRequest,
 			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 		) throws JsonProcessingException {
 		System.out.println(">> ReviewController.addReview()");
 		
 		Long reviewId = reviewService.registerReview(reviewRequest, userDetails.getUserId());
 
 		return ResponseEntity.ok(reviewId);		
-		
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-//		if(Objects.isNull(authUser)) {
-//			return ResponseEntity.badRequest().build(); // 로그인 페이지로 이동		
-//		} else {
-//			Long reviewId = reviewService.registerReview(reviewRequest, authUser.getUserId());
-//
-//			return ResponseEntity.ok(reviewId);
-//		}
 	}
 	
 	/* 서평 수정 */
@@ -351,7 +397,7 @@ public class ReviewController {
 		   @PathVariable Long reviewId,
 //		   @RequestParam(name = "reviewId", required=true) Long reviewId,
 		   HttpSession session,
-		   @AuthenticationPrincipal CustomUserDetails userDetails
+		   @AuthenticationPrincipal UserPrincipal userDetails
 		   ) {	   
 	   try {
 		   System.out.println("MyBookController.deleteReview()");
@@ -393,7 +439,7 @@ public class ReviewController {
 		  @PathVariable Integer reviewId,
 		   @RequestBody LikeRequest likeRequest,
 		   HttpSession session,
-		   @AuthenticationPrincipal CustomUserDetails userDetails
+		   @AuthenticationPrincipal UserPrincipal userDetails
 		   ) {
 	   System.out.println("MyBookController.like()");
 
@@ -410,7 +456,7 @@ public class ReviewController {
 //			@RequestParam("reviewId") Long reviewId,
 			@PathVariable Long reviewId,
 			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 		) {
 		System.out.println("PlaylistController.toggleLikeReview");
 		

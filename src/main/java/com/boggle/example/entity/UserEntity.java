@@ -9,19 +9,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@Entity(name = "users")
 @Getter
 @Setter
 @ToString
-@Entity(name = "users")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 public class UserEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Long userId;
 	
@@ -43,6 +46,18 @@ public class UserEntity {
 	@Column(name = "created_at")
 	private LocalDate joinDate;
 	
+    @Builder
+    public UserEntity(String userName, String email, 
+    		String userProfile, String nickname,
+    		Long userId, String password) {
+        this.userName = userName;
+        this.email = email;
+        this.userProfile = userProfile;
+        this.nickname = nickname;
+        this.userId = userId;
+        this.password = password;
+    }
+	
 	public static UserEntity of(String userName, String nickname, String email, String password, String userProfile) {
 		UserEntity userEntity = new UserEntity();
 		
@@ -54,4 +69,15 @@ public class UserEntity {
 		
 		return userEntity;
 	}
+	
+    public UserEntity update(String name, String picture) {
+        this.userName = name;
+        this.userProfile = picture;
+
+        return this;
+    }
+
+//    public String getRoleKey() {
+//        return this.role.getKey();
+//    }
 }

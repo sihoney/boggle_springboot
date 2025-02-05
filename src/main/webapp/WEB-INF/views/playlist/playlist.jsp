@@ -21,10 +21,12 @@
 	<div id="wrap">
 		<!-- 헤더 -->
 		<c:import url="/WEB-INF/views/include/header.jsp"></c:import>
+		
 		<!-- ------nav------ -->
 		<c:import url="/WEB-INF/views/include/nav.jsp">
 			<c:param name="path" value="playlist" />
 		</c:import>
+		
 <%-- 		<div id="nav" class="clearfix">
 			<c:choose>
 				<c:when test="${result eq 'sameUser'}">

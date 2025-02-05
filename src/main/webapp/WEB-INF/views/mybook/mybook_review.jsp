@@ -8,17 +8,17 @@
 	<meta charset="UTF-8">
 	<title></title>
 	
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/mybook_review.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/modal.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/source.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/write.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/mybook_review.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/modal.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/source.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/write.css">
 	
-	<script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/more.js" defer></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/mybook.js" defer></script>
+	<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+	<script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
+	<script src="${pageContext.request.contextPath}/js/more.js" defer></script>
+	<script src="${pageContext.request.contextPath}/js/mybook.js" defer></script>
 </head>
 <body>
 	<div id="wrap">
@@ -76,7 +76,7 @@
 					 		<div class="reviews" id="r${reviewObj.reviewId }">
 					 			<div class="reviews-header">
 					 				<div class="left">
-					 					<p><a href="${pageContext.request.contextPath}/bookdetail?bookNo=${reviewObj.bookEntity.isbn } &userNo=${reviewObj.userId}">${reviewObj.bookEntity.bookName }</a></p>
+					 					<p><a href="${pageContext.request.contextPath}/books/${reviewObj.bookEntity.isbn }">${reviewObj.bookEntity.bookName }</a></p>
 					 				</div>
 					 				<c:if test="${auth.nickname eq nickname}">
 						 				<div class="right">
@@ -157,20 +157,20 @@
 									<h3 id="profile-title" class="panel-title">내 서재</h3>
 								</c:when>
 								<c:otherwise>
-									<h3 id="profile-title" class="panel-title">${userProfile.nickname}님의서재</h3>
+									<h3 id="profile-title" class="panel-title">${pageUser.nickname}님의서재</h3>
 								</c:otherwise>
 							</c:choose>
 							
 						</div>
 						<div class="panel-body">
 							<div id="profile">
-								<img class="img-circle" id="profile-image" src="${pageContext.request.contextPath}/resources/static/images/user_profile/${userProfile.userProfile}" onerror="this.src='${pageContext.request.contextPath}/resources/static/images/profile.png'">
+								<img class="img-circle" id="profile-image" src="${pageUser.userProfile}" onerror="this.src='${pageContext.request.contextPath}/images/user_profile/profile.png'">
 							</div>
-							<p id="username" data-userId = "${userProfile.userId }">${userProfile.nickname}</p>
+							<p id="username" data-userId = "${pageUser.userId }">${pageUser.nickname}</p>
 							<p id="level">Lv.0</p>
 							<div id="info">
-								<a href="${pageContext.request.contextPath}/user/modify">회원정보수정</a> 
-								<a href="${pageContext.request.contextPath}/user/logout">로그아웃</a>
+								<a href="${pageContext.request.contextPath}/users/edit">회원정보수정</a> 
+								<a href="${pageContext.request.contextPath}/users/logout">로그아웃</a>
 							</div>
 						</div>
 					</div>

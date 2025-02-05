@@ -424,7 +424,7 @@ async function postReviewUser(reviewId){
 			str += '	<div class="reviews" id=r'+mybookVo.reviewId+'> ';
 			str += '		<div class="reviews-header"> ';
 			str += ' 		<div class="left"> ';
-			str += ' 			<p><a href="${pageContext.request.contextPath}/bookdetail?bookNo='+ mybookVo.bookId + '&userNo='+mybookVo.userId+'">' + mybookVo.bookEntity.title + '</a></p> ';
+			str += ' 			<p><a href="${pageContext.request.contextPath}/books/'+ mybookVo.bookId + '">' + mybookVo.bookEntity.title + '</a></p> ';
 			str += ' 		</div> ';
 			
 			if(isSameUser === true) {

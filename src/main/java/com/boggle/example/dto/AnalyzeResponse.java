@@ -2,6 +2,7 @@ package com.boggle.example.dto;
 
 import java.util.List;
 
+import com.boggle.example.dto.review.ReviewCountDTO;
 import com.boggle.example.projection.ReviewCountProjection;
 import com.boggle.example.projection.ReviewProjection;
 
