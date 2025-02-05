@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.dto.RegisterReviewRequest;
-import com.boggle.example.dto.WriteFormResponse;
+import com.boggle.example.dto.review.RegisterReviewRequest;
+import com.boggle.example.dto.review.WriteFormResponse;
 import com.boggle.example.entity.BookEntity;
 import com.boggle.example.entity.EmotionEntity;
 import com.boggle.example.entity.FontEntity;
@@ -46,6 +46,13 @@ public class ReviewService {
 	PlaylistRepository playlistRepository;
 	@Autowired
 	ReviewPlaylistRepository reviewPlaylistRepository;
+	
+/*
+ 	writeForm				서평 등록 페이지
+ 	registerReview			서평 생성
+ 	addReviewToPlaylist		서평을 플리에 등록
+ 	updateReview			서평 수정
+ */
 	
 	@Transactional(readOnly = true)
 	public WriteFormResponse writeForm(Long isbn, Long reviewId) {

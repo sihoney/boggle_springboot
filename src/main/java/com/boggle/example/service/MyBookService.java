@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.boggle.example.dto.LoginResponse;
+import com.boggle.example.dto.user.LoginResponse;
 import com.boggle.example.entity.EmotionEntity;
 import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.entity.ReviewUserEntity;
@@ -40,6 +40,16 @@ public class MyBookService {
 	ReviewUserRepository rvUsRepository;
 	@Autowired
 	ReviewPlaylistRepository reviewPlaylistRepository;
+	
+/*
+	getUserProfile				유저 정보(개인 페이지용)
+	getReviewsByCreatedAt		최신순, 오래된순
+	getReviewsOrderByLikeCount	인기순
+	getReviewByEmotion			감정순
+	likeOrDislikeReview			서평 좋아요 & 좋아요 취소
+	deleteReview				서평 삭제
+	
+ */
 	
 	@Transactional(readOnly = true)
 	public LoginResponse getUserProfile(String nickname) {

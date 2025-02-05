@@ -49,6 +49,18 @@ public class PlaylistService {
 	@Autowired
 	ReviewPlaylistRepository rvPlRepository;
 	
+/*
+	getPlaylists				특정 유저의 플리 목록 조회
+	getPlCover					특정 플리 정보 조회
+	getReviewByPlaylist			특정 플리의 서평 목록 조회
+	getPlaylistFolder			특정 유저의 플리 목록 조회
+	getAllReviewByUserId		서평 목록(모달용)
+	deleteReviewFromPlaylist	서평을 플리에서 삭제
+	toggleLikePlaylist			플리 좋아요 & 좋아요 취소
+	addReviewListToPl			서평을 플리에 추가
+	
+ */
+	
 	@Transactional(readOnly = true)
 	public Map<String, List<PlaylistEntity>> getPlaylists(String nickname) {
 		// 유저 정보 불러오기

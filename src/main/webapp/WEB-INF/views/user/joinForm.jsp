@@ -6,13 +6,13 @@
 <head>
 	<meta charset="UTF-8">
 	<title>join form</title>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/joinForm.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/joinForm.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
 	
-	<script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/joinForm.js" defer></script>
+	<script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
+	<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+	<script src="${pageContext.request.contextPath}/js/joinForm.js" defer></script>
 </head>
 <body>
 	<div id="wrap">
@@ -33,7 +33,8 @@
 				<div id="join-api" class="col-xs-5">
 					<div>
 						<div>
-							<%-- <img src="${pageContext.request.contextPath}/asset/img/facebooklogo.png"> --%> 페이스북으로 회원가입
+							<%-- <img src="${pageContext.request.contextPath}/asset/img/facebooklogo.png"> --%> 
+							<a href="/login/oauth2/code/google">구글으로 회원가입</a>
 						</div>
 					</div>
 					<div>
@@ -48,34 +49,37 @@
 		<!-- content : form -->
 		<div class="container">
 			<div id="join-content" class="row">
-				<form action="${pageContext.request.contextPath}/join" method="post">
+				<form>
 					<div>이름*</div>
 					<div>
 						<input type="text" id="userName" name="userName" placeholder="이름을 입력해주세요">
 					</div>
+					
 					<div>닉네임(1~6자)*</div>
 					<div class="except">
 						<input type="text" maxlength='6' id="nickname" name="nickname" placeholder="닉네임을 입력해주세요" oninput="checkNickname(this.value)">
 						<!--닉네임이 사용중일경우-->
-                        <p class="nickname_already">이미 사용중인 닉네임입니다.</p>
+                        <p class="warning" id="warning_nickname_already">이미 사용중인 닉네임입니다.</p>
 					</div>
+					
 					<div>이메일주소*</div>
 					<div class="except">
 						<input type="text" id="email" name="email" placeholder="ID@example.com" oninput="">
 						<!--메일주소가 사용중일경우-->
-						<p class="email_already">이미 사용중이거나 탈퇴한 이메일 주소입니다.</p>
+						<p class="warning" id="warning_email_already">이미 사용중이거나 탈퇴한 이메일 주소입니다.</p>
 						<!--메일주소양식이 틀렸을경우-->
-						<p class="email_check">이메일 주소를 다시 확인해주세요.</p>
+						<p class="warning" id="warning_email_check">이메일 주소를 다시 확인해주세요.</p>
 					</div>
+					
 					<div>비밀번호*</div>
 					<div>
-						<input type="password" id="" name="password" placeholder="비밀번호를 입력해주세요">
+						<input type="password" id="input_pwd" name="password" placeholder="비밀번호를 입력해주세요">
 					</div>
 					<div>비밀번호 확인*</div>
 					<div class="except">
-						<input type="password" id="" name="re-pw" placeholder="비밀번호를 확인해주세요">
+						<input type="password" id="input_pwd_double" name="re-pw" placeholder="비밀번호를 확인해주세요">
 						<!--비밀번호가 일치하지 않을경우-->
-						<p>비밀번호를 확인해주세요.</p>
+						<p class="warning" id="warning_pwd">비밀번호를 확인해주세요.</p>
 					</div>
 					<!-- 
                         <div id="genrebox">
@@ -91,7 +95,8 @@
                         </div>
                          -->
 					<br>
-					<button type="submit">회원가입</button>
+					<p class="warning" id="warning_empty">빈 항목이 있습니다.</p>
+					<button id="btn_signup" type="submit">회원가입</button>
 				</form>
 			</div>
 		</div>
@@ -100,54 +105,4 @@
 		<c:import url="/WEB-INF/views/include/footer.jsp"></c:import>
 	</div>
 </body>
- 
-<script type="text/javascript">
-
-function checkNickname(nickname){
-	
-    /* var nickname = $('#nickname').val(); //id값이 "nickname"인 값을 저장 */
-    
-    $.ajax({
-        url:'/users/join/checkNickname?nickname=' + nickname, //Controller에서 인식할 주소
-        type:'get', //POST 방식으로 전달
-        success:function(response){  
-        	/*
-        	//1이면 이미 존재
-             if(cnt == 1){//사용 불가능한 닉네임
-                $('.nickname_already').css("display", "none");
-            }       
-            */
-            if(response == true) {
-            	$('.nickname_already').css("display", "block");
-            } else {
-            	$('.nickname_already').css("display", "none");
-            }
-        },
-        error:function(){
-        	console.log("error")
-        }
-    });
-};
-/*
-function checkNickname(){
-	
-    var nickname = $('#nickname').val(); //id값이 "nickname"인 값을 저장
-    
-    $.ajax({
-        url:'/user/nicknameCheck', //Controller에서 인식할 주소
-        type:'post', //POST 방식으로 전달
-        data:{nickname : nickname},
-        success:function(cnt){        	
-        	//1이면 이미 존재
-            if(cnt == 1){//사용 불가능한 닉네임
-                $('.nickname_already').css("display", "none");
-            }        	
-        },
-        error:function(){
-        	console.log("error")
-        }
-    });
-};
-*/
-</script>
 </html>

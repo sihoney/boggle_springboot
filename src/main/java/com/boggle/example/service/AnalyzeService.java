@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.boggle.example.dto.AnalyzeResponse;
 import com.boggle.example.dto.EmotionDTO;
-import com.boggle.example.dto.ReviewCountDTO;
+import com.boggle.example.dto.review.ReviewCountDTO;
 import com.boggle.example.projection.EmotionProjection;
 import com.boggle.example.projection.ReviewCountProjection;
 import com.boggle.example.projection.ReviewProjection;

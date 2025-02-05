@@ -16,16 +16,16 @@
 	<link href="https://hangeul.pstatic.net/hangeul_static/css/NanumGaRamYeonGgoc.css" rel="stylesheet">	
     
    	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/source.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/write.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/modal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/source.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/write.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/modal.css">
 	
-    <script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>	
-	<script src="${pageContext.request.contextPath}/resources/static/js/modal_write_review.js" defer></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/write_review.js" defer></script>
+    <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+    <script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>	
+	<script src="${pageContext.request.contextPath}/js/modal_write_review.js" defer></script>
+	<script src="${pageContext.request.contextPath}/js/write_review.js" defer></script>
 	
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
@@ -171,7 +171,7 @@
 					</c:forEach> --%> 
 					
  					<c:forEach var="wallpaperObj" items="${writeFormResponse.wallpaperList}">
-						<button class="btn_style btn-outline-secondary" data-wallpaperid="${wallpaperObj.wallpaperId }" style="background-image: url('${pageContext.request.contextPath}/resources/static/images/review_card/${wallpaperObj.wallpaperName}')">배경</button>
+						<button class="btn_style btn-outline-secondary" data-wallpaperid="${wallpaperObj.wallpaperId }" style="background-image: url('${pageContext.request.contextPath}/images/review_card/${wallpaperObj.wallpaperName}')">배경</button>
 					</c:forEach>
 					
 					<div class="dropdown">
@@ -193,7 +193,7 @@
 			<div id="contents" class="clearfix">
 					<c:choose>
 						<c:when test="${not empty writeFormResponse.reviewEntity }">
-							<div id="review_box" style="background-size: cover; background-image: url(${pageContext.request.contextPath}/resources/static/images/review_card/${writeFormResponse.reviewEntity.wallpaperEntity.wallpaperName});">
+							<div id="review_box" style="background-size: cover; background-image: url(${pageContext.request.contextPath}/images/review_card/${writeFormResponse.reviewEntity.wallpaperEntity.wallpaperName});">
 			                    <textarea style="font-family: ${writeFormResponse.reviewEntity.fontEntity.fontName};" id="review_textarea" rows="1" placeholder="" spellcheck="false">${writeFormResponse.reviewEntity.content }</textarea>
 		                    </div>
 	                    </c:when>

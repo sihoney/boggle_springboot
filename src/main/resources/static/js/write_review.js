@@ -333,7 +333,7 @@ $(".mqBtn").on("click", function(){
 		
 	} else {
 		//location.href = projectName + '/' + nickname
-		location.href = '/my-reviews';
+		location.href = '/my-reviews/' + NICKNAME;
 	}
 })
 

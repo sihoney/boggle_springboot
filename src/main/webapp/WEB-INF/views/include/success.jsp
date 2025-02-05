@@ -7,12 +7,12 @@
 	<meta charset="UTF-8">
 	<title>success</title>
 	
-    <script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+    <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/css/source.css"> --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
 	
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
-    <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/source.css"> --%>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
+    <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+    <script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
 </head>
 <body>
 	<c:import url="/WEB-INF/views/include/header.jsp"></c:import>

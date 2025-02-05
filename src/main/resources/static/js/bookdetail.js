@@ -82,7 +82,7 @@ function rendering(reviewList){
 		str += ' 		<h3>'+ item.bookTitle +'</h3> ';
 		if(item.userNo == loginUserNo){
 			str += ' 			<a id="reviewDelete" class="review_modify" data-reviewno="'+item.reviewNo+'">삭제</a> ';
-			str += ' 			<a href="review/write?reviewNo='+item.reviewNo+'" class="review_modify">수정</a> ';
+			str += ' 			<a href="reviews/'+item.reviewNo+'/new" class="review_modify">수정</a> ';
 		}
 		str += ' 		<a href="'+item.nickname+'" class="review_nick">'+ item.nickname +'<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a> ';
 		str += ' 		<div class="multiline-ellipsis">'+item.reviewContent+'</div> ';
@@ -128,7 +128,7 @@ async function clickBookMark() {
 	console.log('mark 클릭');
 	
 	try {
-		let response = await fetch(`/bookUser?isbn=${ISBN}`, {
+		let response = await fetch(`${window.location.pathname}/likes`, {
 			method: 'get'
 		});
 		

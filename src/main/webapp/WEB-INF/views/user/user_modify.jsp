@@ -9,14 +9,14 @@
     <meta charset="UTF-8">
 	<title>회원정보수정</title>
 	
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/source.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/user_modify.css">	
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/source.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user_modify.css">	
 	
-    <script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/static/js/modifyUser.js" defer></script>
+    <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+    <script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
+    <script src="${pageContext.request.contextPath}/js/modifyUser.js" defer></script>
 </head>
 <body>
     <div id="wrap">
@@ -37,7 +37,7 @@
 	                    <!-- 기본 프로필 사진 -->
 	                    <div class="float-l">
 	                        <label className="input-file-button" for="btn_file">
-	                            <img id="user_icon" src="${pageContext.request.contextPath}/resources/static/images/user_profile/${auth.profileUrl}" onerror="this.src='${pageContext.request.contextPath}/resources/static/images/user_profile/profile.png'" alt="유저 이미지">
+	                            <img id="user_icon" src="${auth.userProfile}" onerror="this.src='${pageContext.request.contextPath}/images/user_profile/profile.png'" alt="유저 이미지">
 	                        </label>
 	                        <input type="file" id="btn_file" name="userProfile" value="" style="display: none">
 	                    </div>
@@ -72,15 +72,17 @@
 	                        <h2 id="modify_nickname">닉네임 변경</h2>
 	                        <span id="id_check"></span>
 	                        <input type="text" pattern="[A-Za-z0-9]" id="input_nickname" class="input-box" name="nickname" value="${auth.nickname }" placeholder="닉네임을 입력하세요">
-	                    	<button id="checkDuplicate">중복 확인</button>
+	                    	<button id="checkDuplicate">닉네임 중복 확인</button>
 	                    </div>
 	                    <!-- 새 비밀번호 확인 -->
+	                    <!--
 	                    <div>
 	                        <h2 id="modify_pw">현재 비밀번호 입력</h2>
 	                        <span id="pw_check"></span>
 	                        <input id="input_crtPassword" type="text" class="input-box" name="" value="" placeholder="사용중인 비밀번호를 입력하세요">
 	                        <button id="checkPassword">현재 비밀전호 확인</button>
 	                    </div>
+	                    -->
 	                    <!-- 새 비밀번호 확인 -->
 	                    <div id="pw_check_box">        
 	                        <div id="user_pw_check">

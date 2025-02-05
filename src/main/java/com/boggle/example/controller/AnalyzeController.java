@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boggle.example.dto.AnalyzeResponse;
-import com.boggle.example.dto.CustomUserDetails;
 import com.boggle.example.dto.GenreDTO;
+import com.boggle.example.dto.auth.CustomUserDetails;
 import com.boggle.example.service.AnalyzeService;
 
 @Controller
@@ -38,7 +38,7 @@ public class AnalyzeController {
 //		analyzeService.main(nickname, period);
 //		model.addAttribute("analyze", analyzeService.main(nickname, period));
 		
-		return "/WEB-INF/views/analyze/user_analyze.jsp";
+		return "analyze/user_analyze";
 	}
 	
 	@ResponseBody

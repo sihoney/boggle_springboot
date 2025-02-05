@@ -16,17 +16,17 @@
 	<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-myeongjo.css" rel="stylesheet">
 	
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style3.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style3-slide.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style3-sidebar.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style3.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style3-slide.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style3-sidebar.css">
     <!--
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style3-modal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style3-modal.css">
     -->
-    <script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/static/js/app3.js" defer></script>
-    <script src="${pageContext.request.contextPath}/resources/static/js/main-slide.js" defer></script>
-    <script src="${pageContext.request.contextPath}/resources/static/js/main-sidebar.js" defer></script> 
-    <script src="${pageContext.request.contextPath}/resources/static/js/main-modal.js" defer></script>
+    <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+    <script src="${pageContext.request.contextPath}/js/app3.js" defer></script>
+    <script src="${pageContext.request.contextPath}/js/main-slide.js" defer></script>
+    <script src="${pageContext.request.contextPath}/js/main-sidebar.js" defer></script> 
+    <script src="${pageContext.request.contextPath}/js/main-modal.js" defer></script>
 </head>
 <body>
 	<!-- Header -->
@@ -34,7 +34,7 @@
         <!-- nav -->
         <nav>
             <div class="nav-header">
-                <div class="logo"><img src="${pageContext.request.contextPath}/resources/static/images/logo/logo2.png"></div>
+                <div class="logo"><img src="${pageContext.request.contextPath}/images/logo/logo2.png"></div>
             </div>
             <div class="links-container">
                 <ul class="links">				
@@ -44,27 +44,26 @@
 					    <!-- 로그인한 사용자에게만 보이는 콘텐츠 -->			    
 					    <li class="mobile_delete"><a href="${pageContext.request.contextPath}/reviews/new">기록하기</a></li>
 					    <li class="login" data-logStatus="login" data-userNo="${auth.userId}">
-					        <a href="${pageContext.request.contextPath}/my-reviews">
+					        <a href="${pageContext.request.contextPath}/my-reviews/${auth.nickname}">
 					            <div class="userImg">
-					                <img id="header-img-icon" src="${pageContext.request.contextPath}/resources/static/images/${auth.profileUrl}" class="img-circle" onerror="this.src='${pageContext.request.contextPath}/resources/static/images/profile.png'">
+					                <img id="header-img-icon" src="${auth.userProfile}" class="img-circle" onerror="this.src='${pageContext.request.contextPath}/images/user_profile/profile.png'">
 					            </div>
-					            <a href="${pageContext.request.contextPath}/my-reviews">
+					            <a href="${pageContext.request.contextPath}/my-reviews/${auth.nickname}">
 					                <c:out value="${auth.nickname}" />
 					            </a>
 					        </a>
 					    </li>
 					</sec:authorize>
-					
 					<sec:authorize access="!isAuthenticated()">
 					    <!-- 로그아웃한 사용자에게만 보이는 콘텐츠 -->
                			<li class="mobile_delete">
-               				<a href="${pageContext.request.contextPath}/user/joinForm">회원가입</a>
+               				<a href="${pageContext.request.contextPath}/users/register">회원가입</a>
                			</li>
                   			<li class="login" data-logStatus="logout">
 	                        <div class="userImg">
-	                            <img src="${pageContext.request.contextPath}/resources/static/images/profile.png" alt="">
+	                            <img src="${pageContext.request.contextPath}/images/user_profile/profile.png" alt="">
 	                        </div>
-	                        <a href="${pageContext.request.contextPath}/user/loginForm">로그인</a>
+	                        <a href="${pageContext.request.contextPath}/users/login">로그인</a>
 	                    </li>
 					</sec:authorize>
 
@@ -110,7 +109,7 @@
         <div class="sidebar-header">
             <div class="nav-header">
                 <div class="sidebar-logo logo">
-                	<img src="${pageContext.request.contextPath}/resources/static/images/logo/logo2.png">
+                	<img src="${pageContext.request.contextPath}/images/logo/logo2.png">
                 </div>
             </div>
             <button type="button" class="close-btn">
