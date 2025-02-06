@@ -42,11 +42,7 @@ public class PlaylistController {
 	@Autowired
 	PlaylistService plService;
 	@Autowired
-	MyBookService mybookService;
-	@Autowired
 	ReviewService reviewService;
-	@Autowired
-	MainService mainService;
 	
 	final int PAGE_SIZE = 5;
 	final int MODAL_PAGE_SIZE = 5;
@@ -55,24 +51,28 @@ public class PlaylistController {
 	final String STR_SORT = "addedAt,desc";
 	
 /*
-	GET 		/my-playlists								- 플레이리스트 페이지 	
-	GET 		/playlists/{playlistId} 					- 특정 플레이리스트 조회 
+ 	페이지
+		GET 		/my-playlists								- 플레이리스트 페이지 	
+		GET 		/playlists/{playlistId} 					- 특정 플레이리스트 조회 
 	
- 	GET			/playlists?									- 1) 플레이리스트 목록 조회
- 	GET			/reviews_modal								- 2) 
- 	GET			/getMyPlaylist								- 3)
-	POST 		/playlists 									- 플레이리스트 생성 
-	PUT 		/playlists/{playlistId} 					- 플레이리스트 수정  (X)
-	DELETE 		/playlists/{playlistId} 					- 플레이리스트 삭제  (X)
+	조회/생성/수정/삭제
+	 	GET			/playlists?									- 1) 플레이리스트 목록 조회
+	 	GET			/reviews_modal								- 2) 
+	 	GET			/getMyPlaylist								- 3)
+		POST 		/playlists 									- 플레이리스트 생성 
+		PUT 		/playlists/{playlistId} 					- 플레이리스트 수정  (X)
+		DELETE 		/playlists/{playlistId} 					- 플레이리스트 삭제  (X)
 	
-	GET			/playlists/{playlistId}/reviews				- 플리 서평 목록 조회
-	POST		/playlists/{playlistId}/reviews				- 1)플리에 서평 추가
-	POST		/playlists/{playlistId}/reviews/{reviewId}	- 2)
-	POST		/api/review_playlist						- 3)
-	DELETE		/playlists/{playlistId}/reviews/{reviewId}	- 플리에 서평 삭제
+	플리에 서평 추가/삭제
+		GET			/playlists/{playlistId}/reviews				- 플리 서평 목록 조회
+		POST		/playlists/{playlistId}/reviews				- 1)플리에 서평 추가
+		POST		/playlists/{playlistId}/reviews/{reviewId}	- 2)
+		POST		/api/review_playlist						- 3)
+		DELETE		/playlists/{playlistId}/reviews/{reviewId}	- 플리에 서평 삭제
 	
-	POST		/plyalists/{playlistId}/likes				- 플레이리스트 좋아요
-	DELETE		/playlists/{playlistId}/likes	
+	좋아요/취소
+		POST		/plyalists/{playlistId}/likes				- 플레이리스트 좋아요
+		DELETE		/playlists/{playlistId}/likes	
  */
 	
 /*
@@ -171,7 +171,7 @@ public class PlaylistController {
 		    ) { 
 		System.out.println("MainController.getMyPlaylistModal");
 		
-		List<PlaylistDTO> playlists = mainService.getMyPlaylists(reviewId, userDetails.getUserId());
+		List<PlaylistDTO> playlists = plService.getMyPlaylists(reviewId, userDetails.getUserId());
 	
 		return ResponseEntity.ok(playlists);		
 		
@@ -199,7 +199,7 @@ public class PlaylistController {
 //		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
 //		LoginResponse authUser = LoginResponse.of(true, Long.parseLong("1"), "이강인", "강잉뉴", null);
 	
-		return ResponseEntity.ok(reviewService.getMyPlaylist(userDetails.getUserId()));
+		return ResponseEntity.ok(plService.getMyPlaylist(userDetails.getUserId()));
 	}
 	
 	/* 모달 > 리스트 + 페이징 - 플레이리스트 모달*/
@@ -218,7 +218,7 @@ public class PlaylistController {
 //		}
 //		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 
-		Page<ReviewEntity> page = plService.getAllReviewByUserId(userDetails.getUserId(), query, pageable);
+		Page<ReviewEntity> page = reviewService.getAllReviewByUserId(userDetails.getUserId(), query, pageable);
 		Map<String, Integer> pagination = PagingUtil.pagination((int) page.getTotalElements(), MODAL_PAGE_SIZE, pageable.getPageNumber() + 1);
 		
 		return ResponseEntity.ok(Map.of(
@@ -238,7 +238,7 @@ public class PlaylistController {
 	   	    ) { 
 		System.out.println("MainController.addNewPlaylist");
 
-		int httpStatus = mainService.makePlaylist(map.get("playlistName"), userDetails.getUserId());
+		int httpStatus = plService.makePlaylist(map.get("playlistName"), userDetails.getUserId());
 		
 		return ResponseEntity.status(httpStatus).build();
 	}
@@ -285,7 +285,7 @@ public class PlaylistController {
 //		}
 //		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 		
-		plService.addReviewListToPl(checkedReview, playlistId);
+		reviewService.addReviewListToPl(checkedReview, playlistId);
 		
 		return "forward:/playlists/" + playlistId;
 //		+ 		"?page=" + CURRENT_PAGE + 
@@ -315,7 +315,7 @@ public class PlaylistController {
 		System.out.println("MainController.toggleReviewToPly");
 		
 		//playlistService.addReviewListToPl(List.of(map.get("reviewId").intValue()), map.get("playlistId"));
-		int httpStatus = mainService.toggleReviewPlaylist(map.get("reviewId"), map.get("playlistId"));
+		int httpStatus = reviewService.toggleReviewPlaylist(map.get("reviewId"), map.get("playlistId"));
 		
 		return ResponseEntity.status(httpStatus).build();
 	}
@@ -333,7 +333,7 @@ public class PlaylistController {
 		) {
 		System.out.println("Controller.deleteReviewFromPly");
 
-		plService.deleteReviewFromPlaylist(reviewId, playlistId);
+		reviewService.deleteReviewFromPlaylist(reviewId, playlistId);
 		
 		return "forward:/playlists/" + playlistId
 				+ "?page=" + CURRENT_PAGE; 

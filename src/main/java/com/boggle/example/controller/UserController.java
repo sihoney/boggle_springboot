@@ -178,8 +178,8 @@ public class UserController {
 //		System.out.println(passwordToCheck);
 	    
 	    return ResponseEntity.ok(userService.checkPassword(
-	    		userDetails.getNickname(), 
-	    		passwordToCheck.getPassword()
-	    		));
+			userDetails.getNickname(), 
+			passwordToCheck.getPassword()
+		));
 	}
 }
