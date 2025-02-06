@@ -22,6 +22,11 @@ Boggle은 '보다, 글을'의 줄임말로, 서평 등록, 관리 및 공유할 
 
 ## 역할과 기여
 - 백엔드, 프론트엔드: 메인 페이지와 서평등록 페이지 담당
+- Spring -> Spring Boot 변경
+- MyBatis -> JPA 변경
+- Oracle -> MySQL 변경
+- 도커 컨테이너 환경으로 변경
+- Spring Security 사용
 
 ## 학습 내용
 - Maven의 의존성 관리, 빌드 기능
