@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.boggle.example.dto.user.LoginResponse;
 import com.boggle.example.dto.user.UserForm;
 import com.boggle.example.dto.user.UserIdResponse;
 import com.boggle.example.dto.user.UserRequest;
@@ -27,30 +28,28 @@ import com.boggle.example.entity.UserPrincipal;
 import com.boggle.example.repository.UserRepository;
 import com.boggle.example.util.FileUploadUtil;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
-		
-//	@Autowired
+
 	private final UserRepository userRepository;
-//    @Autowired
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }    
-
+   
     /*
      * updateUserInfo			authentication principal 갱신
-     * getUserByEmail		
+     * getUserProfile			특정 유저 조회
+     * getUserByEmail			특정 유저 조회
      * join						가입
      * modifyUser				수정
      * 		updateNickname
      * 		updatePassword
      * 		updateProfileImage
      * checkNickname			닉네임 중복 검사
-     * checkPassword			비밀번호 중복 검사
+     * checkPassword			비밀번호 검사
      */
     
     /* authentication principal 갱신 */
@@ -71,6 +70,18 @@ public class UserService {
         );
     }
     
+	@Transactional(readOnly = true)
+	public LoginResponse getUserProfile(String nickname) {
+		UserEntity userEntity = userRepository.findByNickname(nickname);
+		
+		return LoginResponse.of(
+				true, 
+				userEntity.getUserId(), 
+				userEntity.getUserName(), 
+				userEntity.getNickname(), 
+				userEntity.getUserProfile());
+	}
+    
     public Optional<UserEntity> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -78,8 +89,18 @@ public class UserService {
 	/* 가입 */
 	@Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE) 
 	public UserIdResponse join(UserRequest userRequest) {
-		System.out.println("UserService.insert()");
+		log.info("UserService.join() - userName: {}", userRequest.getUserName());
 		
+        // 중복 이메일 검사
+        if (userRepository.existsByEmail(userRequest.getEmail())) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+		
+        // 비밀번호 검증      
+        if (userRequest.getPassword() == null) {
+            throw new IllegalArgumentException("비밀번호는 필수 입력값입니다.");
+        }
+        
 		UserEntity userEntity = UserEntity.of(
 				userRequest.getUserName(), 
 				userRequest.getNickname(), 
@@ -89,7 +110,6 @@ public class UserService {
 				);
 		
 		userRepository.save(userEntity);
-		
 		return UserIdResponse.from(userEntity.getUserId());
 	}
 	
@@ -155,16 +175,13 @@ public class UserService {
 		System.out.println("UserService.nickcheck()");
 		
 		return userRepository.existsByNicknameAndNicknameNot(nickname, nicknamePrincipal);
-//		return userRepository.existsByNickname(nickname);
 	}
 	
-	/* 비밀번호 중복 검사 */
+	/* 비밀번호 확인 */
 	public boolean checkPassword(String nickname, String passwordToCheck) {
 		UserEntity authUserEntity = userRepository.findByNickname(nickname);
-//		System.out.println(authUserEntity.getPassword());
 		
 		String encodedPasswordToCheck = passwordEncoder.encode(passwordToCheck);
-//		System.out.println(encodedPasswordToCheck);
 		
 		return passwordEncoder.matches(passwordToCheck, authUserEntity.getPassword());
 	}	

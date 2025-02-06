@@ -36,9 +36,9 @@ import com.boggle.example.dto.user.LoginResponse;
 import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.entity.UserPrincipal;
 import com.boggle.example.service.BookDetailService;
-import com.boggle.example.service.MainService;
-import com.boggle.example.service.MyBookService;
+import com.boggle.example.service.EmotionService;
 import com.boggle.example.service.ReviewService;
+import com.boggle.example.service.UserService;
 import com.boggle.example.service.ViewService;
 import com.boggle.example.util.EmotionEnum;
 import com.boggle.example.util.PagingUtil;
@@ -48,17 +48,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class ReviewController {
 	
 	@Autowired
-	MyBookService mybookService;
-	@Autowired
 	ReviewService reviewService;
 	@Autowired
 	AladinApiAdapter aladinApiAdapter;
 	@Autowired
-	MainService mainService;
-	@Autowired
 	ViewService viewService;
 	@Autowired
 	BookDetailService bookDetailService;
+	@Autowired
+	EmotionService emotionService;
+	@Autowired
+	UserService userService;
 	
 	Integer TOTAL_EMOTION = 8;
 	final int SIZE = 5;
@@ -92,11 +92,11 @@ public class ReviewController {
 
 /*
  	페이지 
- 	GET			/boggle							메인 페이지
-	GET			/my-reviews						유저 페이지
-	GET			/reviews/new					서평 등록 페이지	
-	GET			/reviews/edit					서평 수정 페이지
-	GET			/reviews/{reviewId}				서평 이미지 페이지	
+	 	GET			/boggle							메인 페이지
+		GET			/my-reviews						유저 페이지
+		GET			/reviews/new					서평 등록 페이지	
+		GET			/reviews/edit					서평 수정 페이지
+		GET			/reviews/{reviewId}				서평 이미지 페이지	
  */	
 	
 	/* 메인 페이지 */
@@ -115,10 +115,10 @@ public class ReviewController {
 		if (Objects.isNull(userPrincipal)) {
 		    // userDetails 객체가 null인 경우에 대한 처리를 수행합니다.
 		    // 예: 로깅 또는 기본값 설정 등
-			mainMap = mainService.main(null, pageable);
+			mainMap = emotionService.main(null, pageable);
 		} else {
 		    // userDetails 객체가 null이 아닌 경우에만 getUserId() 메서드를 호출합니다.
-			mainMap = mainService.main(
+			mainMap = emotionService.main(
 				(Long) userPrincipal.getAttributes().get("userId"), 
 				pageable
 			);
@@ -145,7 +145,7 @@ public class ReviewController {
 		System.out.println("ReviewController.mybook()");		
 		System.out.println(nickname);
 		
-		Page<ReviewEntity> pageObj = mybookService.getReviewsByCreatedAt(
+		Page<ReviewEntity> pageObj = reviewService.getReviewsByCreatedAt(
 				nickname, 
 				null, 
 				pageable, 
@@ -158,7 +158,7 @@ public class ReviewController {
 				);
 		
 		model.addAttribute("nickname", nickname);
-		model.addAttribute("pageUser", mybookService.getUserProfile(nickname));
+		model.addAttribute("pageUser", userService.getUserProfile(nickname));
 		
 		model.addAttribute("emotionList", EmotionEnum.getList());
 		model.addAttribute("reviewList", pageObj.getContent());
@@ -179,11 +179,6 @@ public class ReviewController {
 			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
 		System.out.println(">> ReviewWriteController.write()");
-	  
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-//		if(Objects.isNull(authUser)) {
-//			return "/WEB-INF/views/user/loginForm.jsp";
-//		}
 		
 		model.addAttribute("writeFormResponse", reviewService.writeForm(isbn, reviewId));
 		
@@ -200,11 +195,6 @@ public class ReviewController {
 			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
 		System.out.println(">> ReviewWriteController.write()");
-	  
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-//		if(Objects.isNull(authUser)) {
-//			return "/WEB-INF/views/user/loginForm.jsp";
-//		}
 		
 		model.addAttribute("writeFormResponse", reviewService.writeForm(isbn, reviewId));
 		
@@ -225,6 +215,7 @@ public class ReviewController {
 	}
 	
 /*
+	알라딘 API
 	GET			/searchbook				aladin-api 책 검색	
  */
 	
@@ -243,14 +234,16 @@ public class ReviewController {
 	}
 	
 /*
-	GET			/reviews-with-style		서평 목록 불러오기 - main 페이지
-	GET			/reviews				서평 목록 불러오기 - mybook 페이지
-	GET			/api/books/{isbn}		특정 책의 서평 목록 조회 - book detail 페이지
-	POST 		/reviews				게시물 작성 
-	PUT 		/reviews/{id}			게시물 수정 
-	DELETE 		/reviews/{id} 			게시물 삭제
+ 	API
+		GET			/reviews-with-style		서평 목록 불러오기 - main 페이지
+		GET			/reviews				서평 목록 불러오기 - mybook 페이지
+		GET			/api/books/{isbn}		특정 책의 서평 목록 조회 - book detail 페이지
+		POST 		/reviews				게시물 작성 
+		PUT 		/reviews/{id}			게시물 수정 
+		DELETE 		/reviews/{id} 			게시물 삭제
  */	
 	
+	/* 서평 리스트 api - main 페이지 */
 	@ResponseBody
 	@GetMapping("/reviews-with-style") 
 	public Map<String, Object> apiReview(
@@ -258,8 +251,7 @@ public class ReviewController {
 			 @RequestParam(value="emotionId", required=false) Long emotionId,
 			 @PageableDefault(page = 0, size = SIZE) Pageable pageable,
 			 HttpSession session,
-			 @AuthenticationPrincipal UserPrincipal userDetails
-			 ) {
+			 @AuthenticationPrincipal UserPrincipal userDetails) {
 		System.out.println("MainController.apiReview()");
 
 		Long authUserId;
@@ -269,15 +261,15 @@ public class ReviewController {
 		authUserId = null;
 		
 		if(playlistId != null)
-			return mainService.reviewsByPlaylistId(playlistId, authUserId, pageable);
+			return reviewService.reviewsByPlaylistId(playlistId, authUserId, pageable);
 		else if (emotionId != null){
-			return mainService.reviewsByEmotionId(emotionId, authUserId, pageable);
+			return reviewService.reviewsByEmotionId(emotionId, authUserId, pageable);
 		} else {
-			return mainService.reviewsByEmotionId((long) Math.floor(TOTAL_EMOTION * Math.random()), authUserId, pageable);
+			return reviewService.reviewsByEmotionId((long) Math.floor(TOTAL_EMOTION * Math.random()), authUserId, pageable);
 		}
 	}	
 	
-//	서평 리스트 api
+   /* 서평 리스트 api - mybook 페이지 */
    @ResponseBody  
    @GetMapping("/reviews")  // /api/reviews -> /reviews 
    public ResponseEntity<ReviewListResponse> getReviews (
@@ -288,12 +280,6 @@ public class ReviewController {
            @AuthenticationPrincipal UserPrincipal userDetails
            ){
 	   System.out.println("MyBookController.getReviews()");
-
-//	   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-//	  if (Objects.isNull(authUser)) {
-//		   System.out.println("세션 만료");
-//		   return ResponseEntity.badRequest().build();
-//	   }
 	  
 	  String property = pageable.getSort().get().findFirst().orElse(null).getProperty();
 
@@ -301,7 +287,7 @@ public class ReviewController {
 	  if(property.equals("likeCount")) {
 		  System.out.println(">> 인기순");
 		  
-		  pageObj = mybookService.getReviewsOrderByLikeCount(
+		  pageObj = reviewService.getReviewsOrderByLikeCount(
 				  userId, 
 				  userDetails.getUserId(), 
 				  pageable);
@@ -309,7 +295,7 @@ public class ReviewController {
 	  else if("undefined".equals(emotionName) || "null".equals(emotionName) || Objects.isNull(emotionName) ) {
 		  System.out.println(">> 최신순");
 		  
-		  pageObj = mybookService.getReviewsByCreatedAt(
+		  pageObj = reviewService.getReviewsByCreatedAt(
 				  null, 
 				  userId, 
 				  pageable, 
@@ -318,7 +304,7 @@ public class ReviewController {
 	  else {
 		  System.out.println(">> 감정별");
 		  
-		  pageObj = mybookService.getReviewByEmotion(
+		  pageObj = reviewService.getReviewByEmotion(
 				  userId, 
 				  emotionName, 
 				  pageable, 
@@ -401,16 +387,8 @@ public class ReviewController {
 		   ) {	   
 	   try {
 		   System.out.println("MyBookController.deleteReview()");
-		   
-//		   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-//		   if(Objects.isNull(authUser)) {
-//			   return new ResponseEntity<>(
-//					   "세션 정보 만료", 
-//					   HttpStatus.BAD_GATEWAY
-//					   );
-//		   }
 
-		   mybookService.deleteReview(userDetails.getUserId(), reviewId); 
+		   reviewService.deleteReview(userDetails.getUserId(), reviewId); 
 		   
 		   return new ResponseEntity<>(
 				   "Entity with ID " + reviewId + " has been deleted successfully", 
@@ -426,10 +404,10 @@ public class ReviewController {
 	
 /*
  	좋아요 기능
-	POST		/reviews/{reviewId}/likes 
-	DELETE		/reviews/{reviewId}/likes
-	GET			/reviews/{reviewId}/likes/count		좋아요 개수 조회
-	GET			/reviews/{reviewId}/likes/me		현재 사용자의 좋아요 상태 확인
+		POST		/reviews/{reviewId}/likes 
+		DELETE		/reviews/{reviewId}/likes
+		GET			/reviews/{reviewId}/likes/count		좋아요 개수 조회
+		GET			/reviews/{reviewId}/likes/me		현재 사용자의 좋아요 상태 확인
  */
 	
   /* 서평 좋아요 & 좋아요 취소*/
@@ -443,8 +421,7 @@ public class ReviewController {
 		   ) {
 	   System.out.println("MyBookController.like()");
 
-//	   LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-	   Integer result = mybookService.likeOrDislikeReview(userDetails.getUserId(), likeRequest.getReviewId());
+	   Integer result = reviewService.likeOrDislikeReview(userDetails.getUserId(), likeRequest.getReviewId());
 	   return ResponseEntity.status(result).build();
   }	
   
