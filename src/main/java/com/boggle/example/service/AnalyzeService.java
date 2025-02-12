@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.boggle.example.dto.AnalyzeResponse;
 import com.boggle.example.dto.EmotionDTO;
 import com.boggle.example.dto.review.ReviewCountDTO;
+import com.boggle.example.entity.UserEntity;
+import com.boggle.example.exception.UserNotFoundException;
 import com.boggle.example.projection.EmotionProjection;
 import com.boggle.example.projection.ReviewCountProjection;
 import com.boggle.example.projection.ReviewProjection;
@@ -35,12 +37,23 @@ public class AnalyzeService {
 	@Autowired
 	ReviewRepository reviewRepository;
 	
+/*
+	main
+	getWeeklyReviewCounts
+	getMonthlyReviewCounts
+	getYearlyReviewCounts
+	changeProjectionToEmotionDTO
+ */
+	
 	@Transactional
 	public AnalyzeResponse main(String nickname, String period) {
 		
 		System.out.println("AnalyzeService.analyze()");
 		
-		Long userId = userRepository.findByNickname(nickname).getUserId();
+		UserEntity user = userRepository.findByNickname(nickname)
+				.orElseThrow(() -> new UserNotFoundException("해당 유저가 존재하지 않습니다. nickname: " + nickname));
+		
+		Long userId = user.getUserId();
 		Integer totalCountByPeriod = null;
 		
 		LocalDateTime today = LocalDateTime.now();

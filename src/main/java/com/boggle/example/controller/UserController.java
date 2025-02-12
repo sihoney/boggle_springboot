@@ -99,7 +99,7 @@ public class UserController {
 			) {
 		System.out.println("UserController.join()");
 		
-		userService.join(userRequest);
+		userService.createUser(userRequest);
 
 		return "user/loginForm";
 	}
@@ -124,13 +124,13 @@ public class UserController {
 		
 		try {
 			// 1. 사용자 정보 업데이트
-			UserEntity updatedUserEntity = userService.modifyUser(
+			UserEntity updatedUserEntity = userService.updateUser(
 				userDetails.getUserId(), 
 				userForm					
 			);		
 	        
 	        // 2. authentication principal 갱신
-	        userService.updateUserInfo(
+	        userService.updateUserPrincipal(
         		UserPrincipal.create(updatedUserEntity), 
         		request
         	);        
@@ -162,7 +162,7 @@ public class UserController {
     		){
     	System.out.println("닉네임 중복 확인 : "+nickname);
         
-    	boolean result = userService.checkNickname(nickname, userPrincipal.getNickname());
+    	boolean result = userService.validateNickname(nickname, userPrincipal.getNickname());
         
         return new ResponseEntity(result, HttpStatus.OK);
     }
@@ -177,7 +177,7 @@ public class UserController {
 		) {
 //		System.out.println(passwordToCheck);
 	    
-	    return ResponseEntity.ok(userService.checkPassword(
+	    return ResponseEntity.ok(userService.validatePassword(
 			userDetails.getNickname(), 
 			passwordToCheck.getPassword()
 		));

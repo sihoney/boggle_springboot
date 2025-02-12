@@ -36,21 +36,27 @@ $(".pagination").on("click", ".page-item", function(e){
 async function getAndRenderSearchedBook(query, page){
 	
 	searchBook(query, page).then(response => {
-		
-		var totalPageNo = response.totalPageNo
-		var startBtnNo = response.startPage
-		var endBtnNo = response.endPage
-		var bookList = response.bookList
-		
-		// 응답 정보 출력 전, 현재 리스트 & 페이징 초기화 
-		$("#modal-playlist").children().remove()
-		$(".pagination").children().remove()
-		
-		// response 출력 
-		renderBooks(bookList)
-		
-		// 페이징 출력 
-		renderPaging(totalPageNo, startBtnNo, endBtnNo, page)	
+		if(response.success) {
+			var bookList = response.data.bookList;
+			var totalPageNo = response.data.totalPages;
+			var startBtnNo = response.data.startPage;
+			var endBtnNo = response.data.endPage;
+			var hasNext = response.data.hasNext;
+			var hasPrevious = response.data.hasPrevious;
+			var currentPage = response.data.currentPage;
+			
+			// 응답 정보 출력 전, 현재 리스트 & 페이징 초기화 
+			$("#modal-playlist").children().remove()
+			$(".pagination").children().remove()
+			
+			// response 출력 
+			renderBooks(bookList)
+			
+			// 페이징 출력 
+			renderPaging(totalPageNo, startBtnNo, endBtnNo, page)			
+		} else {
+			console.log("Failed to load data: " + response.errorCode);
+		}	
 	}).catch(error => {
 		console.log(error)
 	})

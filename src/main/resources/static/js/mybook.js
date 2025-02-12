@@ -38,16 +38,42 @@ $('#latest-order').on('click', async function() {
 	
 	//색깔변화
 	$('#best-order').attr('class','');
+	$('#oldest-order').attr('class','txt-b');
 	$('#latest-order').attr('class','txt-b');
 	
-	let direction
-	if(name === '최신순') {
+	let direction = 'desc'
+/*	if(name === '최신순') {
 		$(this).text('오래된순')
 		direction = 'asc'
 	} else {
 		$(this).text('최신순')
 		direction = 'desc'
-	}
+	}*/
+	
+	PAGE = 0
+	EMOTION_NAME = null
+	
+	reviewsAndPaging(PAGE, "createdAt," + direction, EMOTION_NAME)
+});
+
+// 오래된순
+$('#oldest-order').on('click', async function() {
+	
+	let name = $(this).text()
+	
+	//색깔변화
+	$('#best-order').attr('class','');
+	$('#latest-order').attr('class','');
+	$('#oldest-order').attr('class','txt-b');
+	
+	let direction = 'asc'
+/*	if(name === '최신순') {
+		$(this).text('오래된순')
+		direction = 'asc'
+	} else {
+		$(this).text('최신순')
+		direction = 'desc'
+	}*/
 	
 	PAGE = 0
 	EMOTION_NAME = null
@@ -70,19 +96,19 @@ $('#best-order').on('click', function() {
 	reviewsAndPaging(PAGE, SORT, EMOTION_NAME)
 });
 	
-	// 감정태그
-	$("#dropdown-menu-emotion").on("click", "li", async function() {
+// 감정태그
+$("#dropdown-menu-emotion").on("click", "li", async function() {
 
-		//색깔변화
-		$('#latest-order').attr('class', '');
-		$('#best-order').attr('class', '');
+	//색깔변화
+	$('#latest-order').attr('class', '');
+	$('#best-order').attr('class', '');
 
-		//데이터수집
-		EMOTION_NAME = $(this).text();
-		PAGE = 1
-		
-		reviewsAndPaging(PAGE, "createdAt,desc", EMOTION_NAME)
-	});
+	//데이터수집
+	EMOTION_NAME = $(this).text();
+	PAGE = 1
+	
+	reviewsAndPaging(PAGE, "createdAt,desc", EMOTION_NAME)
+});
 
 //좋아요 버튼을 클릭했을때(이벤트)
 $("#rvlist").on("click", ".like", function() {
@@ -113,45 +139,45 @@ $("#rvlist").on("click", ".like", function() {
 	})
 });
 	
-	//삭제 버튼을 눌렀을때
-	$("#rvlist").on("click", ".delete", function() {
+//삭제 버튼을 눌렀을때
+$("#rvlist").on("click", ".delete", function() {
 
-		//데이터수집
-		var $this = $(this);
-		var reviewId = $this.data("reviewid");
-		
-		//출력
-		console.log("삭제하려는서평 : "+reviewId);
-		
-		// 서평 삭제
-		deleteReview(reviewId).then(response => {
-			console.log(response)
-			
-			//삭제알림  
-			alert('서평이 삭제되었습니다! :-)');
-		
-			//해당 서평 삭제(화면변화)
-			//$("#r"+no).remove();
-
-		}).then(() => {
-			//색깔변화
-			$('#best-order').attr('class','txt-b');
-	    	$('#latest-order').attr('class','');
-	    	
-			reviewsAndPaging(1, "createdAt,desc", null)
-		}).catch(errer => {
-			console.log(error)
-		})
+	//데이터수집
+	var $this = $(this);
+	var reviewId = $this.data("reviewid");
 	
-		/*
-		.catch(error => {
-			console.log(error)
-			
-			//삭제실패알림  
-			alert('잘못된 접근입니다! :-/');
-		})
-		*/
-	});	
+	//출력
+	console.log("삭제하려는서평 : "+reviewId);
+	
+	// 서평 삭제
+	deleteReview(reviewId).then(response => {
+		console.log(response)
+		
+		//삭제알림  
+		alert('서평이 삭제되었습니다! :-)');
+	
+		//해당 서평 삭제(화면변화)
+		//$("#r"+no).remove();
+
+	}).then(() => {
+		//색깔변화
+		$('#best-order').attr('class','txt-b');
+    	$('#latest-order').attr('class','');
+    	
+		reviewsAndPaging(1, "createdAt,desc", null)
+	}).catch(errer => {
+		console.log(error)
+	})
+
+	/*
+	.catch(error => {
+		console.log(error)
+		
+		//삭제실패알림  
+		alert('잘못된 접근입니다! :-/');
+	})
+	*/
+});	
 	
 	/*
 	// modal_add_playlist - closeBtn 

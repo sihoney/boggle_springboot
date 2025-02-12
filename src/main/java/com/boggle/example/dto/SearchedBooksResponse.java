@@ -4,24 +4,20 @@ import java.util.List;
 
 import com.boggle.example.entity.BookEntity;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class SearchedBooksResponse {
 
-	private Integer totalPageNo;
 	private Integer startPage;
 	private Integer endPage;
-	private List<BookEntity> bookList;
+    private final int totalPages;
+    private final int currentPage;
+    private final boolean hasNext;
+    private final boolean hasPrevious;	
 	
-	private SearchedBooksResponse(Integer totalPageNo, Integer startPage, Integer endPage, List<BookEntity> bookList) {
-		this.totalPageNo = totalPageNo;
-		this.startPage = startPage;
-		this.endPage = endPage;
-		this.bookList = bookList;
-	}
-	
-	public static SearchedBooksResponse of(List<BookEntity> bookList, Integer startPage, Integer endPage, Integer totalPageNo) {
-		return new SearchedBooksResponse(totalPageNo, startPage, endPage, bookList);
-	}
+	private List<BookDTO> bookList;
+
  }

@@ -114,6 +114,8 @@ $("document").ready(function(){
 		console.log(">>책 정보 불러오기")
 		
 		getBook(bookTitleQuery).then(data => {
+			console.log(data)
+			
 			let item = data[0]
 
 			// 저장할 때 필요한 정보 저장

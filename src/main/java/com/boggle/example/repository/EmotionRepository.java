@@ -10,5 +10,5 @@ public interface EmotionRepository extends JpaRepository<EmotionEntity, Long> {
 
 	Optional<EmotionEntity> findById(Long emotionId);
 	
-	EmotionEntity findByEmotionName(String emotionName);
+	Optional<EmotionEntity> findByEmotionName(String emotionName);
 }

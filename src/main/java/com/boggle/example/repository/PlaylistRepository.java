@@ -1,6 +1,7 @@
 package com.boggle.example.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Tuple;
 
@@ -12,13 +13,16 @@ import com.boggle.example.entity.PlaylistEntity;
 
 public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long>{
 	
-	PlaylistEntity findByPlaylistId(Long playlistId);
+	Optional<PlaylistEntity> findByPlaylistId(Long playlistId);
 	
 	List<PlaylistEntity> findByUserId(Long userId);
 	
 	// 인기있는 플리
-	@Query("SELECT p, count(pu) AS likeCount FROM playlist p LEFT JOIN playlist_user pu ON p.playlistId = pu.playlistId GROUP BY p.playlistId")
-	List<Object[]> findOrderByLikeCount(Pageable pageable);
+	@Query("SELECT p, count(pu) AS likeCount FROM playlist p " +
+			"LEFT JOIN playlist_user pu ON p.playlistId = pu.playlistId " +
+			"GROUP BY p.playlistId " +
+			"ORDER BY likeCount DESC")
+	List<Object[]> findPopularPlaylists(Pageable pageable);
 	
 	// 내가 좋아요한 플리
 	@Query("SELECT p FROM playlist p LEFT JOIN playlist_user pu ON p.playlistId = pu.playlistId WHERE pu.userId = ?1")
@@ -29,7 +33,7 @@ public interface PlaylistRepository extends JpaRepository<PlaylistEntity, Long>{
 			"FROM playlist p " + 
 			"LEFT JOIN users u ON p.userId = u.userId " + 
 			"WHERE p.playlistId = ?1")
-	Tuple getByPlaylistId(Long playlistId);
+	Optional<Tuple> findPlaylistWithCreator(Long playlistId);
 
 	List<PlaylistEntity> findAllByUserId(Long userId);
 	

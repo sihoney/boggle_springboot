@@ -13,4 +13,6 @@ public interface PlaylistUserRepository extends JpaRepository<PlaylistUserEntity
 	Optional<PlaylistUserEntity> findByUserIdAndPlaylistId(Long userId, Long playlistId);
 	
 	Page<PlaylistUserEntity> findAllByUserId(Long userId, Pageable pageable);
+	
+	boolean existsByUserIdAndPlaylistId(Long userId, Long playlistId);
 }

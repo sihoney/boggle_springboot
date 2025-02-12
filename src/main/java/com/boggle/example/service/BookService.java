@@ -22,7 +22,7 @@ import com.boggle.example.repository.UserRepository;
 import com.boggle.example.util.PagingUtil;
 
 @Service
-public class BookDetailService {
+public class BookService {
 
 	@Autowired
 	BookRepository bookRepository;
@@ -32,6 +32,11 @@ public class BookDetailService {
 	BookUserRepository bookUserRepository;
 	@Autowired
 	UserRepository userRepository;
+	
+/*
+	bookDetail 
+	toggleBookLike
+ */
 	
 	public Map<String, Object> bookDetail(Long isbn, Pageable pageable, Long userId) {
 		
@@ -63,7 +68,7 @@ public class BookDetailService {
 		return map;
 	}
 	
-	public Long bookUser(Long userId, Long isbn) {
+	public Long toggleBookLike(Long userId, Long isbn) {
 
 		BookUserEntity existingEntity = bookUserRepository.findByUserIdAndIsbn(userId, isbn);
 		
@@ -80,6 +85,5 @@ public class BookDetailService {
 			
 			return 0L;
 		}
-		
 	}
 }

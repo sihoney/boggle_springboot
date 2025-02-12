@@ -18,6 +18,8 @@ import com.boggle.example.entity.PlaylistUserEntity;
 import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.entity.ReviewUserEntity;
 import com.boggle.example.entity.UserEntity;
+import com.boggle.example.exception.PlaylistNotFoundException;
+import com.boggle.example.exception.UserNotFoundException;
 import com.boggle.example.repository.PlaylistRepository;
 import com.boggle.example.repository.PlaylistUserRepository;
 import com.boggle.example.repository.ReviewRepository;
@@ -38,9 +40,14 @@ public class TasteService {
 	@Autowired
 	PlaylistRepository plRepository;
 	
+/*
+	getTaste
+ */
+	
 	@Transactional
 	public Map<String, Object> getTaste(String nickname) {
-		UserEntity userEntity = userRepository.findByNickname(nickname);
+		UserEntity userEntity = userRepository.findByNickname(nickname)
+				.orElseThrow(() -> new UserNotFoundException("해당 유저가 존재하지 않습니다. nickname: " + nickname));
 		
 		Page<ReviewUserEntity> page01 = rvUsRepository.findAllByUserId(userEntity.getUserId(), PageRequest.of(0, 2));
 
@@ -77,9 +84,14 @@ public class TasteService {
 		}).collect(Collectors.toList());
 		
 		Page<PlaylistUserEntity> page = plUsRepository.findAllByUserId(userEntity.getUserId(), PageRequest.of(0, 5));
-		List<PlaylistEntity> plList = page.getContent().stream().map(entity -> {
-			return plRepository.findByPlaylistId(entity.getPlaylistId());		
-		}).collect(Collectors.toList());
+		List<PlaylistEntity> plList = page.getContent().stream()
+				.map(entity -> {
+					PlaylistEntity playlist = plRepository.findByPlaylistId(entity.getPlaylistId())
+							.orElseThrow(() -> new PlaylistNotFoundException("해당하는 플레이리스트가 존재하지 않습니다."));
+
+					return 	playlist;
+				})
+				.collect(Collectors.toList());
 		
 		Map<String, Object> map = new HashMap();
 		map.put("reviewList", reviewlist);

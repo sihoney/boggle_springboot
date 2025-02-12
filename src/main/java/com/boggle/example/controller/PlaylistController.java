@@ -2,7 +2,6 @@ package com.boggle.example.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.servlet.http.HttpSession;
 
@@ -24,13 +23,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.boggle.example.dto.LikeStatus;
 import com.boggle.example.dto.PlaylistDTO;
-import com.boggle.example.dto.auth.CustomUserDetails;
+import com.boggle.example.dto.ReviewSearchCriteria;
 import com.boggle.example.entity.PlaylistEntity;
 import com.boggle.example.entity.ReviewEntity;
 import com.boggle.example.entity.ReviewPlaylistEntity;
-import com.boggle.example.service.MainService;
-import com.boggle.example.service.MyBookService;
+import com.boggle.example.entity.UserPrincipal;
 import com.boggle.example.service.PlaylistService;
 import com.boggle.example.service.ReviewService;
 import com.boggle.example.util.PagingUtil;
@@ -57,8 +56,8 @@ public class PlaylistController {
 	
 	조회/생성/수정/삭제
 	 	GET			/playlists?									- 1) 플레이리스트 목록 조회
-	 	GET			/reviews_modal								- 2) 
-	 	GET			/getMyPlaylist								- 3)
+	 	GET			/reviews_modal								- 2) 플레이리스트 목록 조회
+	 	GET			/getMyPlaylist								- 3) 플레이리스트 목록 조회
 		POST 		/playlists 									- 플레이리스트 생성 
 		PUT 		/playlists/{playlistId} 					- 플레이리스트 수정  (X)
 		DELETE 		/playlists/{playlistId} 					- 플레이리스트 삭제  (X)
@@ -66,8 +65,8 @@ public class PlaylistController {
 	플리에 서평 추가/삭제
 		GET			/playlists/{playlistId}/reviews				- 플리 서평 목록 조회
 		POST		/playlists/{playlistId}/reviews				- 1)플리에 서평 추가
-		POST		/playlists/{playlistId}/reviews/{reviewId}	- 2)
-		POST		/api/review_playlist						- 3)
+		POST		/playlists/{playlistId}/reviews/{reviewId}	- 2)플리에 서평 추가
+		POST		/api/review_playlist						- 3)플리에 서평 추가
 		DELETE		/playlists/{playlistId}/reviews/{reviewId}	- 플리에 서평 삭제
 	
 	좋아요/취소
@@ -84,20 +83,10 @@ public class PlaylistController {
 	@GetMapping("/my-playlists")
 	public String playlist(
 //			@PathVariable(value = "nickname", required = true) String nickname, 
-		    HttpSession session, 
 		    Model model,
-		    @AuthenticationPrincipal CustomUserDetails userDetails
+		    @AuthenticationPrincipal UserPrincipal userDetails
 			) {
-		System.out.println("PlaylistController.playlist()");
-		
-//		if (session.getAttribute("authUser") == null || 
-//				session.getAttribute("authUser").equals("") || 
-//				nickname.equals(null)) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//			   
-//			   return "/WEB-INF/views/user/loginForm.jsp";
-//		}		
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");  
+		System.out.println("PlaylistController.playlist()");  
 		
 //		if(!Objects.isNull(authUser) && nickname.equals(authUser.getNickname())) {
 //			model.addAttribute("result", "sameUser");
@@ -112,7 +101,7 @@ public class PlaylistController {
 			model.addAttribute("result", "otherUser");
 		}
 		
-		Map<String, List<PlaylistEntity>> map = plService.getPlaylists(nickname);
+		Map<String, List<PlaylistEntity>> map = plService.findPlaylistsByNickname(nickname);
 		
 		model.addAttribute("likeList", map.get("likeList"));
 		model.addAttribute("ppList", map.get("ppList"));
@@ -127,18 +116,11 @@ public class PlaylistController {
 			@PageableDefault(size = PAGE_SIZE, page = CURRENT_PAGE) Pageable pageable,
 			Model model,
 			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
-		System.out.println("PlaylistController.playlistFolder()");
-		
-//		if (session.getAttribute("authUser") == null ) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//			   
-//			   return "/WEB-INF/views/user/loginForm.jsp";
-//		}	
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+		System.out.println("PlaylistController.playlistFolder()"); 
 
-		Map<String, Object> map = plService.getPlaylistFolder(userDetails.getUserId(), playlistId, pageable);
+		Map<String, Object> map = plService.findPlaylistFolder(userDetails.getUserId(), playlistId, pageable);
 		
 		model.addAttribute("reviewList", map.get("reviewList"));
 		model.addAttribute("playlistCover", map.get("playlistCover"));
@@ -152,14 +134,16 @@ public class PlaylistController {
 	}
 	
 /*	
- 	GET			/playlists?									- 1) 플레이리스트 목록 조회
- 	GET			/reviews_modal								- 2) 
- 	GET			/getMyPlaylist								- 3)
+ 	조회/생성/수정/삭제
+ 	GET			/playlists									- 1) 플레이리스트 목록 조회
+ 	GET			/reviews_modal								- 2) 플레이리스트 목록 조회
+ 	GET			/getMyPlaylist								- 3) 플레이리스트 목록 조회
  	
 	POST 		/playlists 									- 플레이리스트 생성 
 	PUT 		/playlists/{playlistId} 					- 플레이리스트 수정  (X)
 	DELETE 		/playlists/{playlistId} 					- 플레이리스트 삭제  (X)	
  */	
+	
 	// 모달> 내 플리 목록 불러오기 - 메인 페이지
 	@ResponseBody
 	@GetMapping("/playlists") // getMyPlaylistModal
@@ -167,23 +151,13 @@ public class PlaylistController {
 			@RequestParam(value="reviewId") Long reviewId,
 //			@RequestParam(value="playlistId") Long playlistId,
 		    HttpSession session,
-		    @AuthenticationPrincipal CustomUserDetails userDetails
+		    @AuthenticationPrincipal UserPrincipal userDetails
 		    ) { 
 		System.out.println("MainController.getMyPlaylistModal");
 		
-		List<PlaylistDTO> playlists = plService.getMyPlaylists(reviewId, userDetails.getUserId());
+		List<PlaylistDTO> playlists = plService.findPlaylistsByUserIdAndReviewId(reviewId, userDetails.getUserId());
 	
 		return ResponseEntity.ok(playlists);		
-		
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-		
-//		if(authUser != null) {
-//			List<PlaylistDTO> playlists = mainService.getMyPlaylists(reviewId, authUser.getUserId());
-//		
-//			return ResponseEntity.ok(playlists);
-//		}
-		
-//		return ResponseEntity.internalServerError().build();
 	}
 	
 //	모달 > 플리 정보 - 서평 등록 페이지
@@ -192,14 +166,11 @@ public class PlaylistController {
 //	@GetMapping("/playlists")
 	public ResponseEntity<List<PlaylistEntity>> getMyPlaylist(
 			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
 		System.out.println("ReviewController.getMyPlaylist()");
 	
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-//		LoginResponse authUser = LoginResponse.of(true, Long.parseLong("1"), "이강인", "강잉뉴", null);
-	
-		return ResponseEntity.ok(plService.getMyPlaylist(userDetails.getUserId()));
+		return ResponseEntity.ok(plService.findPlaylistsByUserId(userDetails.getUserId()));
 	}
 	
 	/* 모달 > 리스트 + 페이징 - 플레이리스트 모달*/
@@ -209,23 +180,25 @@ public class PlaylistController {
 			@PageableDefault(size = MODAL_PAGE_SIZE, page = CURRENT_PAGE) Pageable pageable,
 			@RequestParam(required = false) String query,
 			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
 		System.out.println("Controller.modalListPage");
-		
-//		if (session.getAttribute("authUser") == null) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//		}
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
 
-		Page<ReviewEntity> page = reviewService.getAllReviewByUserId(userDetails.getUserId(), query, pageable);
+//		Page<ReviewEntity> page = reviewService.findReviews(userDetails.getUserId(), query, pageable);
+		Page<ReviewEntity> page = reviewService.findReviews(
+			ReviewSearchCriteria.builder()
+				.query(query)
+				.authUserId(userDetails.getUserId())
+				.build(), 
+			pageable
+		);
 		Map<String, Integer> pagination = PagingUtil.pagination((int) page.getTotalElements(), MODAL_PAGE_SIZE, pageable.getPageNumber() + 1);
 		
 		return ResponseEntity.ok(Map.of(
-				"reviewList", page.getContent(), 
-				"startPage", pagination.get("startPage"), 
-				"endPage", pagination.get("endPage")
-			));
+			"reviewList", page.getContent(), 
+			"startPage", pagination.get("startPage"), 
+			"endPage", pagination.get("endPage")
+		));
 	}
 	
 	// 새로운 플리 만들기
@@ -233,17 +206,17 @@ public class PlaylistController {
 	@PostMapping("/playlists")
 	public ResponseEntity<Object> addNewPlaylist(
 			@RequestBody Map<String, String> map,
-	   	    HttpSession session,
-	   	    @AuthenticationPrincipal CustomUserDetails userDetails
+	   	    @AuthenticationPrincipal UserPrincipal userDetails
 	   	    ) { 
 		System.out.println("MainController.addNewPlaylist");
 
-		int httpStatus = plService.makePlaylist(map.get("playlistName"), userDetails.getUserId());
+		PlaylistEntity playlist = plService.createPlaylist(map.get("playlistName"), userDetails.getUserId());
 		
-		return ResponseEntity.status(httpStatus).build();
+		return ResponseEntity.of(null);
 	}
 	
 /*
+ 	플리에 서평 추가/삭제
 	GET			/playlists/{playlistId}/reviews				- 플리 서평 목록 조회
 	POST		/playlists/{playlistId}/reviews				- 1)플리에 서평 추가
 	POST		/playlists/{playlistId}/reviews/{reviewId}	- 2)
@@ -256,17 +229,11 @@ public class PlaylistController {
 	public ResponseEntity<Map<String, Object>> getPlaylistFolder(
 			@PathVariable(value = "playlistId") Long playlistId,
 			@PageableDefault(size = PAGE_SIZE, page = CURRENT_PAGE) Pageable pageable,
-			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
 		System.out.println("PlaylistController.getPlaylistFolder()");
 		
-//		if (session.getAttribute("authUser") == null) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//		}
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
-		
-		Map<String, Object> map = plService.getPlaylistFolder(userDetails.getUserId(), playlistId, pageable);
+		Map<String, Object> map = plService.findPlaylistFolder(userDetails.getUserId(), playlistId, pageable);
 				
 		return ResponseEntity.ok(map);
 	}
@@ -275,17 +242,11 @@ public class PlaylistController {
 	@PostMapping("/playlists/{playlistId}/reviews")
 	public String addReviews(
 	        @RequestParam("checkedReview") List<Integer> checkedReview,
-	        @PathVariable Long playlistId,
-			HttpSession session
+	        @PathVariable Long playlistId
 			) {
 		System.out.println("PlaylistController.addReviews");
 		
-//		if (session.getAttribute("authUser") == null) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//		}
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
-		
-		reviewService.addReviewListToPl(checkedReview, playlistId);
+		reviewService.managePlaylistReviewAddList(checkedReview, playlistId);
 		
 		return "forward:/playlists/" + playlistId;
 //		+ 		"?page=" + CURRENT_PAGE + 
@@ -303,7 +264,7 @@ public class PlaylistController {
 			) {
 		System.out.println("ReviewWriterController.addReviewToPly()");
 		
-		return reviewService.addReviewToPlaylist(reviewId, playlistId);
+		return reviewService.managePlaylistReviewAdd(reviewId, playlistId);
 	}
 	
 //	3. 플리에 서평 추가 - 메인 페이지
@@ -315,7 +276,7 @@ public class PlaylistController {
 		System.out.println("MainController.toggleReviewToPly");
 		
 		//playlistService.addReviewListToPl(List.of(map.get("reviewId").intValue()), map.get("playlistId"));
-		int httpStatus = reviewService.toggleReviewPlaylist(map.get("reviewId"), map.get("playlistId"));
+		int httpStatus = reviewService.managePlaylistReviewToggle(map.get("reviewId"), map.get("playlistId"));
 		
 		return ResponseEntity.status(httpStatus).build();
 	}
@@ -323,17 +284,14 @@ public class PlaylistController {
 	/* 플리에서 서평 삭제 */
 	@DeleteMapping("/playlists/{playlistId}/reviews/{reviewId}")
 	public String deleteReviewFromPly(
-//		  @RequestParam("reviewId") Long reviewId,
-//	   	  @RequestParam("playlistId") Long playlistId,
 		  @PathVariable Long playlistId,
 		  @PathVariable Long reviewId,
 	   	  @RequestParam(value = "page", required = false, defaultValue = "1") int crtPage,
-	   	  Model model,
-	   	  HttpSession session
+	   	  Model model
 		) {
 		System.out.println("Controller.deleteReviewFromPly");
 
-		reviewService.deleteReviewFromPlaylist(reviewId, playlistId);
+		reviewService.managePlaylistReviewRemove(reviewId, playlistId);
 		
 		return "forward:/playlists/" + playlistId
 				+ "?page=" + CURRENT_PAGE; 
@@ -356,6 +314,7 @@ public class PlaylistController {
 //	}
 	
 /*
+ 	좋아요/취소
 	POST		/plyalists/{playlistId}/likes				- 플레이리스트 좋아요
 	DELETE		/playlists/{playlistId}/likes	
  */
@@ -363,20 +322,13 @@ public class PlaylistController {
 	/* 해당 플리 좋아요 & 좋아요 취소 */
 	@ResponseBody
 	@PostMapping("/playlists/{playlistId}/likes")
-	public Long	likePlaylist(
-//			@RequestParam(value="playlistId") Long playlistId,
+	public LikeStatus	likePlaylist(
 			@PathVariable Long playlistId,
-			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
-		System.out.println("PlaylistController.likePlaylist()");
-		
-//		if (session.getAttribute("authUser") == null) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//		}
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+		System.out.println("PlaylistController.likePlaylist()"); 
 
-		return plService.toggleLikePlaylist(userDetails.getUserId(), playlistId);
+		return plService.togglePlaylistLike(userDetails.getUserId(), playlistId);
 	}
 	
 	/*
@@ -386,14 +338,9 @@ public class PlaylistController {
 //			@RequestParam(value="playlistId") Long playlistId,
 			@PathVariable Long playlistId,
 			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
-		System.out.println("PlaylistController.unlikePlaylist()");
-		
-//		if (session.getAttribute("authUser") == null) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//		}
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser"); 
+		System.out.println("PlaylistController.unlikePlaylist()"); 
 
 		return plService.toggleLikePlaylist(userDetails.getUserId(), playlistId);
 	}

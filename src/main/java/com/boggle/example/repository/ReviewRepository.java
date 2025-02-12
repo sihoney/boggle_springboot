@@ -2,6 +2,7 @@ package com.boggle.example.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Tuple;
 
@@ -19,7 +20,7 @@ import com.boggle.example.projection.ReviewProjection;
 
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>{
 
-	ReviewEntity findByReviewId(Long reviewId);
+	Optional<ReviewEntity> findByReviewId(Long reviewId);
 	
 	Page<ReviewEntity> findAllByUserId(Long userId, Pageable pageable);
 	

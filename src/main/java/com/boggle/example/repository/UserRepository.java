@@ -11,7 +11,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
 // 로그인 시 이메일과 비밀번호와 일치하는 데이터 조회
 	UserEntity findByEmailAndPassword(String email, String password);
 	
-	UserEntity findByNickname(String nickname);
+	Optional<UserEntity> findByNickname(String nickname);
 	
 	Optional<UserEntity> findByEmail(String email);
 	

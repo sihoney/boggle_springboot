@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Builder
 @Entity(name = "playlist_user")
 @Table(name = "playlist_user")
 public class PlaylistUserEntity {

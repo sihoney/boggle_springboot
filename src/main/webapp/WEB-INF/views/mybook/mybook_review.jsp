@@ -18,7 +18,7 @@
 	<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
 	<script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
 	<script src="${pageContext.request.contextPath}/js/more.js" defer></script>
-	<script src="${pageContext.request.contextPath}/js/mybook.js" defer></script>
+	<script src="${pageContext.request.contextPath}/js/mybook2.js" defer></script>
 </head>
 <body>
 	<div id="wrap">
@@ -52,6 +52,7 @@
 					<div id="list">
 						<ul>
 							<li><a><span id="latest-order">최신순</span></a></li>
+							<li><a><span id="oldest-order">오래된순</span></a></li>
 							<li><a><span id="best-order">인기순</span></a></li>
 						</ul>
 						<span class="glyphicon glyphicon-filter" aria-hidden="true"></span>

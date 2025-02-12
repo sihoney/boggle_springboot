@@ -7,25 +7,23 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boggle.example.dto.auth.CustomUserDetails;
-import com.boggle.example.dto.user.LoginResponse;
-import com.boggle.example.service.BookDetailService;
+import com.boggle.example.entity.UserPrincipal;
+import com.boggle.example.service.BookService;
 import com.boggle.example.service.TasteService;
 
 @Controller
 public class BookController {
 
 	@Autowired
-	BookDetailService bookDetailService;
+	BookService bookDetailService;
 	@Autowired
 	TasteService tasteService;
 	
@@ -42,19 +40,10 @@ public class BookController {
 	/* 취향 홈 페이지 */
 	@RequestMapping("/taste")
 	public String tasteMain(
-//			@PathVariable(value = "nickname") String nickname,
-			HttpSession session,
 			Model model,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
-		System.out.println("TasteController.tastemain()");
-		
-//		if (session.getAttribute("authUser") == null) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//			   
-//			   return "/WEB-INF/views/user/loginForm.jsp";
-//		}		
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");  
+		System.out.println("TasteController.tastemain()"); 
 		
 		model.addAttribute("nickname", userDetails.getNickname());
 		
@@ -74,15 +63,8 @@ public class BookController {
 			@PathVariable(value="isbn") Long isbn,
 			@PageableDefault(page = 0, size = SIZE) Pageable pageable,
 			Model model,
-			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
-//		if (session.getAttribute("authUser") == null) {
-//			   System.out.println("세션만료 혹은 잘못된 접근");
-//			   
-//			   return "/WEB-INF/views/user/loginForm.jsp";
-//		}	
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
 		
 		Map<String, Object> map = bookDetailService.bookDetail(isbn, pageable, userDetails.getUserId());
 		
@@ -99,14 +81,10 @@ public class BookController {
 	/* 책 좋아요 */
 	@ResponseBody
 	@RequestMapping("/books/{isbn}/likes")
-	public Long bookUser(
-//			@RequestParam("isbn") Long isbn, 
+	public Long bookUser( 
 			@PathVariable Long isbn,
-			HttpSession session,
-			@AuthenticationPrincipal CustomUserDetails userDetails
+			@AuthenticationPrincipal UserPrincipal userDetails
 			) {
-//		LoginResponse authUser = (LoginResponse) session.getAttribute("authUser");
-		
-		return bookDetailService.bookUser(userDetails.getUserId(), isbn);
+		return bookDetailService.toggleBookLike(userDetails.getUserId(), isbn);
 	}
 }
