@@ -4,51 +4,26 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>playlist-like</title>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/asset/bootstrap/css/bootstrap.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/asset/css/all_css.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/asset/css/main-book.css">
-
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/asset/js/jquery-1.12.4.js"></script>
-<script
-	src="${pageContext.request.contextPath}/asset/bootstrap/js/bootstrap.js"></script>
+	<meta charset="UTF-8">
+	<title>playlist-like</title>
+	
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/main-book.css">
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+	<script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
+</head>
 <body>
 	<div id="wrap">
 		<!-- 헤더 -->
 		<c:import url="/WEB-INF/views/include/header.jsp"></c:import>
+		
 		<!-- ------nav------ -->
-		<div id="nav" class="clearfix">
-			<c:choose>
-				<c:when test="${result eq 'sameUser'}">
-					<ul class="nav nav-tabs">
-						<li role="presentation"><a
-							href="${pageContext.request.contextPath}/${nickname}">내 서평</a></li>
-						<li role="presentation" class="active"><a
-							href="${pageContext.request.contextPath}/${nickname}/tastemain">취향저격</a></li>
-						<li role="presentation"><a
-							href="${pageContext.request.contextPath}/${nickname}/like_playlist">플레이리스트</a></li>
-						</ul>
-						<!--세션 아이디와 사이트아이디 같을때-->
-				</c:when>
-				<c:otherwise>
-					<!-- 세션아이디랑 다를때는 사이트주소의 아이디와 같은 유저의 데이터들 불러오기-->
-					<ul class="nav nav-tabs">
-						<li role="presentation"><a
-							href="${pageContext.request.contextPath}/${nickname}">남 서평</a></li>
-						<li role="presentation" class="active"><a
-							href="${pageContext.request.contextPath}/${nickname}/tastemain">취향저격</a></li>
-						<li role="presentation"><a
-							href="${pageContext.request.contextPath}/${nickname}/like_playlist">플레이리스트</a></li>
-					</ul>
-				</c:otherwise>
-			</c:choose>
-		</div>
-		<!-- ------nav------ -->
+		<c:import url="/WEB-INF/views/include/nav.jsp">
+			<c:param name="path" value="taste" />
+		</c:import>
+		
 		<!-- ------nav2------ -->
 		<ul id="nav2" class="nav nav-pills">
 			<!-- 세션아이디와 비교, 다를경우 '이름님의 취향' -->

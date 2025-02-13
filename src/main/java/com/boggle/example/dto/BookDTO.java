@@ -25,6 +25,9 @@ public class BookDTO {
 	@JsonProperty("categoryId")
 	private final Long genreId;
 	
+	@JsonProperty("categoryName")
+	private final String genreName;
+	
 	@JsonProperty("link")
 	private final String bookUrl;
 	

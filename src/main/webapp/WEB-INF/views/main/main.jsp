@@ -42,13 +42,13 @@
 						
 					<sec:authorize access="isAuthenticated()">
 					    <!-- 로그인한 사용자에게만 보이는 콘텐츠 -->			    
-					    <li class="mobile_delete"><a href="${pageContext.request.contextPath}/reviews/new">기록하기</a></li>
+					    <li class="mobile_delete"><a href="${pageContext.request.contextPath}/my/reviews/new">기록하기</a></li>
 					    <li class="login" data-logStatus="login" data-userNo="${auth.userId}">
-					        <a href="${pageContext.request.contextPath}/my-reviews/${auth.nickname}">
+					        <a href="${pageContext.request.contextPath}/my/reviews/${auth.nickname}">
 					            <div class="userImg">
 					                <img id="header-img-icon" src="${auth.userProfile}" class="img-circle" onerror="this.src='${pageContext.request.contextPath}/images/user_profile/profile.png'">
 					            </div>
-					            <a href="${pageContext.request.contextPath}/my-reviews/${auth.nickname}">
+					            <a href="${pageContext.request.contextPath}/my/reviews/${auth.nickname}">
 					                <c:out value="${auth.nickname}" />
 					            </a>
 					        </a>

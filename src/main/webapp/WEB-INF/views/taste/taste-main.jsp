@@ -7,15 +7,15 @@
 	<meta charset="UTF-8">
 	<title>taste</title>
 	
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/taste-main.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/write.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/modal.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/taste-main.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/write.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/modal.css">
 	
-	<script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/more.js"></script>
+	<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+	<script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
+	<script src="${pageContext.request.contextPath}/js/more.js"></script>
 </head>
 <!--header-->
 <body>
@@ -142,7 +142,7 @@
 							<c:forEach items="${userList}" var="vo">
 								<div class="likewriter">
 									<a href="${pageContext.request.contextPath}/${vo.nickname}/mybook"> 
-										<img src="${pageContext.request.contextPath}/resources/static/images/user_profile/${vo.userProfile }" onerror="this.src='${pageContext.request.contextPath}/resources/static/images/user_profile/profile.png'" class="img-circle">
+										<img src="${pageContext.request.contextPath}/images/user_profile/${vo.userProfile }" onerror="this.src='${pageContext.request.contextPath}/images/user_profile/profile.png'" class="img-circle">
 									</a>
 									<div id="writerinfo">
 										<h1>${vo.nickname}</h1>

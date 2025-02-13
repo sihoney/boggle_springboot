@@ -51,7 +51,7 @@ public class PlaylistController {
 	
 /*
  	페이지
-		GET 		/my-playlists								- 플레이리스트 페이지 	
+		GET 		/playlists/my								- 플레이리스트 페이지 	
 		GET 		/playlists/{playlistId} 					- 특정 플레이리스트 조회 
 	
 	조회/생성/수정/삭제
@@ -80,12 +80,11 @@ public class PlaylistController {
  	GET 		/playlists/{playlistId} 		- 특정 플레이리스트 조회
  */
 	
-	@GetMapping("/my-playlists")
+	@GetMapping("/my/playlists/{nickname}")
 	public String playlist(
-//			@PathVariable(value = "nickname", required = true) String nickname, 
+			@PathVariable(value = "nickname", required = true) String nickname, 
 		    Model model,
-		    @AuthenticationPrincipal UserPrincipal userDetails
-			) {
+		    @AuthenticationPrincipal UserPrincipal userDetails) {
 		System.out.println("PlaylistController.playlist()");  
 		
 //		if(!Objects.isNull(authUser) && nickname.equals(authUser.getNickname())) {
@@ -93,13 +92,16 @@ public class PlaylistController {
 //		} else {
 //			model.addAttribute("result", "otherUser");
 //		}
+
+//		if(nickname.equals(userDetails.getNickname())) {
+//			model.addAttribute("result", "sameUser");
+//		} else {
+//			model.addAttribute("result", "otherUser");
+//		}
 		
-		String nickname = userDetails.getNickname();
-		if(nickname.equals(userDetails.getNickname())) {
-			model.addAttribute("result", "sameUser");
-		} else {
-			model.addAttribute("result", "otherUser");
-		}
+	    // null 체크 추가
+	    boolean isOwner = userDetails != null && nickname.equals(userDetails.getNickname());
+	    model.addAttribute("isOwner", isOwner);  // boolean 값으로 전달
 		
 		Map<String, List<PlaylistEntity>> map = plService.findPlaylistsByNickname(nickname);
 		
@@ -115,9 +117,7 @@ public class PlaylistController {
 			@PathVariable(value = "playlistId") Long playlistId,
 			@PageableDefault(size = PAGE_SIZE, page = CURRENT_PAGE) Pageable pageable,
 			Model model,
-			HttpSession session,
-			@AuthenticationPrincipal UserPrincipal userDetails
-			) {
+			@AuthenticationPrincipal UserPrincipal userDetails) {
 		System.out.println("PlaylistController.playlistFolder()"); 
 
 		Map<String, Object> map = plService.findPlaylistFolder(userDetails.getUserId(), playlistId, pageable);

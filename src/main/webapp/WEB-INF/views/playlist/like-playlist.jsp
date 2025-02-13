@@ -7,14 +7,14 @@
 	<meta charset="UTF-8">
 	<title>taste-main</title>
 	
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/playlist-like.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/modal.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/playlist-like.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/modal.css">
 	
-	<script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/more.js"></script>
+	<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+	<script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
+	<script src="${pageContext.request.contextPath}/js/more.js"></script>
 </head>
 <!--header-->
 <body>
@@ -33,14 +33,23 @@
 			<div id="content4">
 				<div class="minicontent">
 					<div class="left">
-						<c:choose>
+<%-- 						<c:choose>
 							<c:when test="${result eq 'sameUser'}">
 								<p>'${nickname}'님이 좋아하는 플레이리스트</p>
 							</c:when>
 							<c:otherwise>
 								<p>'${otherUser.nickname}'님이 좋아하는 플레이리스트</p>
 							</c:otherwise>
-						</c:choose>
+						</c:choose> --%>
+<%-- 						<c:if test="${isOwner}">
+						    <!-- 소유자용 UI -->
+						    <p>'${nickname}'님이 좋아하는 플레이리스트</p>
+						</c:if>
+						<c:if test="${!isOwner}">
+						    <!-- 방문자용 UI -->
+						    <p>'${otherUser.nickname}'님이 좋아하는 플레이리스트</p>
+						</c:if> --%>	
+						<p>'${nickname}'님이 좋아하는 플레이리스트</p>					
 					</div>
 					<div class="right" id="more">
 						<p>

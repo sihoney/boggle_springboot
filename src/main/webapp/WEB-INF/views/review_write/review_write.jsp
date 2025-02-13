@@ -24,7 +24,6 @@
 	
     <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
     <script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>	
-	<script src="${pageContext.request.contextPath}/js/modal_write_review.js" defer></script>
 	<script src="${pageContext.request.contextPath}/js/write_review.js" defer></script>
 	
     <!-- JavaScript Bundle with Popper -->

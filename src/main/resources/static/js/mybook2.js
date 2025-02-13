@@ -39,7 +39,7 @@ const ReviewAPI = {
 
   async deleteReview(reviewId) {
     try {
-      const response = await fetch(`/review/${reviewId}`, {
+      const response = await fetch(`/reviews/${reviewId}`, {
         method: 'DELETE'
       });
       return response;
@@ -189,7 +189,10 @@ class ReviewEventHandler {
 
     // Review list actions
     document.querySelector('#rvlist').addEventListener('click', event => {
-      const target = event.target;
+	  event.preventDefault();
+      event.stopPropagation(); // 이벤트 버블링 중지
+      
+const target = event.target;
       if (target.classList.contains('like')) {
         this.handleLike(target);
       } else if (target.classList.contains('delete')) {
@@ -253,7 +256,7 @@ class ReviewEventHandler {
     
     if (response) {
       alert('서평이 삭제되었습니다! :-)');
-      await this.fetchAndRenderReviews(1, 'createdAt,desc', null);
+      await this.fetchAndRenderReviews(0, 'createdAt,desc', null);
     }
   }
 
@@ -268,6 +271,7 @@ class ReviewEventHandler {
 
   static async fetchAndRenderReviews(page, sort, emotionName) {
     const data = await ReviewAPI.getReviewsAndPaging(page, sort, emotionName);
+	console.log(data)
     if (data) {
       ReviewUI.renderReviewList(data.reviewList);
       ReviewUI.renderPagination(data.startPage, data.endPage);

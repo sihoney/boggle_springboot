@@ -94,7 +94,7 @@ public class ReviewController {
 /*
 	페이지 
 	 	GET			/boggle							메인 페이지
-		GET			/my-reviews						유저 페이지
+		GET			/my/reviews						유저 페이지
 		GET			/reviews/new					서평 등록 페이지	
 		GET			/reviews/edit					서평 수정 페이지
 		GET			/reviews/{reviewId}				서평 이미지 페이지
@@ -121,7 +121,7 @@ public class ReviewController {
 /*
  	페이지 
 	 	GET			/boggle							메인 페이지
-		GET			/my-reviews						유저 페이지
+		GET			/reviews						유저 페이지
 		GET			/reviews/new					서평 등록 페이지	
 		GET			/reviews/edit					서평 수정 페이지
 		GET			/reviews/{reviewId}				서평 이미지 페이지	
@@ -162,7 +162,7 @@ public class ReviewController {
 	
 	/* my-reviews 페이지 */
 //	@Secured("ROLE_ADMIN")
-	@RequestMapping("/my-reviews/{nickname}")
+	@RequestMapping("/my/reviews/{nickname}")
 	public String mybook (
 			@PathVariable(value = "nickname", required=true) String nickname,
 			@PageableDefault(size = 8, page = 0, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, //, sort = "createdAt,desc"
@@ -336,13 +336,13 @@ public class ReviewController {
    /* 서평 리스트 api - mybook 페이지 */
    @ResponseBody  
    @GetMapping("/reviews")
-   public ResponseEntity<ReviewListResponse> getReviews (
+   public ResponseEntity<ReviewListResponse> getMyBookPage (
 		   @RequestParam(required=false) Long userId,
 		   @RequestParam(required=false) String emotionName, 
            @PageableDefault(size = MYBOOK_PAGE_SIZE, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
            @AuthenticationPrincipal UserPrincipal userDetails){
 	   
-	   System.out.println("MyBookController.getReviews()");
+	   log.info("ReviewController.getMyBookPage(): {}, {}", pageable.getSort(), pageable.getPageNumber());
 	  
 	   ReviewSearchCriteria.ReviewSearchCriteriaBuilder criteriaBuilder = ReviewSearchCriteria.builder()
 			   .userId(userId)
@@ -416,14 +416,13 @@ public class ReviewController {
      * 서평 수정 API
      */
 	@ResponseBody
-	@PutMapping("/reviews/{reviewId}")
+	@PutMapping("/reviews")
 	public ResponseEntity<Object> updateReview(
-			@PathVariable Long reviewId,
 			@Valid @RequestBody RegisterReviewRequest request,
 			@AuthenticationPrincipal UserPrincipal userDetails) {
-		log.info("Updating review: {} for user: {}", reviewId, userDetails.getUserId());
+		log.info("Updating review: {} for user: {}", request.getReviewId(), userDetails.getUserId());
 
-		request.validate(reviewId); // requestDTO의 reviewId와 pathVariable의 reviewId 일치 여부 검증
+//		request.validate(reviewId); // requestDTO의 reviewId와 pathVariable의 reviewId 일치 여부 검증
 		
 		ReviewEntity updatedReview = reviewService.updateReview(request);
 

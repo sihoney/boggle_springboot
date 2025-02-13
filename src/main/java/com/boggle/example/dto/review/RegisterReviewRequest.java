@@ -1,15 +1,15 @@
 package com.boggle.example.dto.review;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
 @ToString
@@ -23,7 +23,6 @@ public class RegisterReviewRequest {
 	@JsonProperty("title")
 	private String bookName;
 	
-	@NotNull(message = "ISBN은 필수입니다.")
 	private Long isbn;
 	
 	@JsonProperty("url")
@@ -35,15 +34,12 @@ public class RegisterReviewRequest {
 	@JsonProperty("categoryid")
 	private Long genreId;
 	
-	@NotNull(message = "감정 ID는 필수입니다.")
 	private Long emotionId;
 	
 	private String fontName;
-	
-	@NotNull(message = "폰트 ID는 필수입니다.")
+
 	private Long fontId;
 	
-	@NotBlank(message = "서평 내용은 필수입니다.")
 	@Size(max = 1000, message = "서평은 1000자를 초과할 수 없습니다.")
 	@JsonProperty("reviewContent")
 	private String content;

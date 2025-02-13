@@ -29,12 +29,11 @@ public class ApiResponse<T> {
 //	private String pubDate;
 //	private String imageUrl;
 
-	public static Object success(Long reviewId, String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public static Object success(Long reviewId, String string) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 	
-
     public static <T> ApiResponse<T> success(T data, String message) {
         return ApiResponse.<T>builder()
                 .success(true)

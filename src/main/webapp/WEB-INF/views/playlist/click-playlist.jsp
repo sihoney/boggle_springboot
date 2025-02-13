@@ -8,16 +8,16 @@
 	<meta charset="UTF-8">
 	<title>플레이리스트 폴더</title>
 
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/bootstrap/css/bootstrap.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/all_css.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/playlist-click.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/static/css/style.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/all_css.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/playlist-click.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 	<link href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css" rel="stylesheet">
 
-	<script src="${pageContext.request.contextPath}/resources/static/js/jquery-1.12.4.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/bootstrap/js/bootstrap.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/more.js" defer></script>
-	<script src="${pageContext.request.contextPath}/resources/static/js/playlistFolder.js" defer></script>
+	<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+	<script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"></script>
+	<script src="${pageContext.request.contextPath}/js/more.js" defer></script>
+	<script src="${pageContext.request.contextPath}/js/playlistFolder.js" defer></script>
 </head>
 
 <!--header-->
